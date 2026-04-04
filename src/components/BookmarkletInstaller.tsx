@@ -6,9 +6,9 @@
 // base64 JSON, and opens your Deal Tracker app with the data pre-filled.
 // Tiny loader — the real logic lives at /bookmarklet-script so it can be updated
 // without the user needing to re-drag the bookmark.
-const BOOKMARKLET_CODE = `javascript:(function(){var s=document.createElement('script');s.src='http://localhost:3000/bookmarklet-script?_='+Date.now();document.head.appendChild(s);})();`
-
 export default function BookmarkletInstaller() {
+  const origin = typeof window !== "undefined" ? window.location.origin : ""
+  const BOOKMARKLET_CODE = `javascript:(function(){var s=document.createElement('script');s.src='${origin}/bookmarklet-script?_='+Date.now();document.head.appendChild(s);})();`
   return (
     <div className="space-y-6">
       {/* The draggable bookmarklet */}
