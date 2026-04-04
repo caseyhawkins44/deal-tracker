@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { logActivity } from "@/lib/activity"
 
 export async function GET() {
   const session = await auth()
@@ -52,6 +53,13 @@ export async function POST(req: NextRequest) {
         notes: body.notes || null,
         addedById: session.user.id,
       },
+    })
+
+    await logActivity({
+      dealId: deal.id,
+      userId: session.user.id,
+      action: "DEAL_CREATED",
+      description: `${session.user.name ?? session.user.email} added this deal`,
     })
 
     return NextResponse.json(deal, { status: 201 })

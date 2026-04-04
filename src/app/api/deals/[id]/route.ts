@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
+import { logActivity } from "@/lib/activity"
 
 export async function GET(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
@@ -27,6 +28,8 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   try {
     const { id } = await params
     const body = await req.json()
+
+    const before = await prisma.deal.findUnique({ where: { id }, select: { status: true } })
 
     const deal = await prisma.deal.update({
       where: { id },
@@ -56,6 +59,22 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         notes: body.notes || null,
       },
     })
+
+    if (before?.status !== body.status) {
+      await logActivity({
+        dealId: id,
+        userId: session.user.id,
+        action: "STATUS_CHANGED",
+        description: `${session.user.name ?? session.user.email} changed status from "${before?.status}" to "${body.status}"`,
+      })
+    } else {
+      await logActivity({
+        dealId: id,
+        userId: session.user.id,
+        action: "FINANCIALS_EDITED",
+        description: `${session.user.name ?? session.user.email} updated deal details`,
+      })
+    }
 
     return NextResponse.json(deal)
   } catch (e) {

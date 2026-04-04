@@ -70,6 +70,9 @@ export function analyzeDeal(deal: Deal) {
       ? deal.purchasePrice / (deal.monthlyRent * 12)
       : 0
 
+  const annualDebtService = monthlyMortgage * 12
+  const dscr = annualDebtService > 0 ? annualNOI / annualDebtService : 999
+
   return {
     downPayment,
     loanAmount,
@@ -85,6 +88,7 @@ export function analyzeDeal(deal: Deal) {
     cashOnCash,
     grossYield,
     grm,
+    dscr,
   }
 }
 

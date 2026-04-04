@@ -4,7 +4,11 @@ import { redirect, notFound } from "next/navigation"
 import Link from "next/link"
 import NavBar from "@/components/NavBar"
 import InfoTooltip from "@/components/InfoTooltip"
+import DealVoting from "@/components/DealVoting"
+import DealComments from "@/components/DealComments"
+import DealActivity from "@/components/DealActivity"
 import { analyzeDeal, fmt, fmtPct } from "@/lib/calculations"
+import { DEFAULT_CRITERIA, metricDot, type InvestmentCriteriaType } from "@/lib/criteria"
 import DeleteDealButton from "@/components/DeleteDealButton"
 
 const TOOLTIPS = {
@@ -18,19 +22,29 @@ const TOOLTIPS = {
     "Annual gross rent ÷ Purchase price. A quick screening metric — does not account for expenses or vacancy.\n\nGuideline: 8%+ suggests the deal may pencil out. Always verify with cap rate and cash-on-cash.",
 }
 
+const DOT_COLORS = {
+  green: "bg-green-500",
+  amber: "bg-amber-400",
+  red: "bg-red-500",
+}
+
 export default async function DealDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session?.user) redirect("/login")
 
   const { id } = await params
-  const deal = await prisma.deal.findUnique({
-    where: { id },
-    include: { addedBy: { select: { name: true, email: true } } },
-  })
+  const [deal, criteriaRow] = await Promise.all([
+    prisma.deal.findUnique({
+      where: { id },
+      include: { addedBy: { select: { name: true, email: true } } },
+    }),
+    prisma.investmentCriteria.findUnique({ where: { id: "singleton" } }),
+  ])
 
   if (!deal) notFound()
 
   const m = analyzeDeal(deal)
+  const c: InvestmentCriteriaType = criteriaRow ?? DEFAULT_CRITERIA
 
   return (
     <div className="min-h-screen">
@@ -69,6 +83,9 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
           </div>
         </div>
 
+        {/* Voting */}
+        <DealVoting dealId={deal.id} currentUserId={session.user.id!} />
+
         {/* Key Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <BigMetric
@@ -77,6 +94,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             value={fmt(m.monthlyCashFlow)}
             sub="after all expenses + mortgage"
             positive={m.monthlyCashFlow >= 0}
+            dot={metricDot(m.monthlyCashFlow, c.minMonthlyCashFlow)}
           />
           <BigMetric
             label="Cap Rate"
@@ -84,6 +102,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             value={fmtPct(m.capRate)}
             sub="NOI ÷ purchase price"
             positive={m.capRate >= 5}
+            dot={metricDot(m.capRate, c.minCapRate)}
           />
           <BigMetric
             label="Cash-on-Cash"
@@ -91,6 +110,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             value={fmtPct(m.cashOnCash)}
             sub="annual cash flow ÷ invested"
             positive={m.cashOnCash >= 8}
+            dot={metricDot(m.cashOnCash, c.minCashOnCash)}
           />
           <BigMetric
             label="Gross Yield"
@@ -98,6 +118,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             value={fmtPct(m.grossYield)}
             sub="annual rent ÷ purchase price"
             positive={m.grossYield >= 8}
+            dot={metricDot(m.grossYield, c.minCapRate)}
           />
         </div>
 
@@ -174,11 +195,17 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-0.5">GRM</p>
-              <p className="font-semibold">{m.grm.toFixed(1)}x</p>
+              <div className="flex items-center gap-1.5">
+                <p className="font-semibold">{m.grm.toFixed(1)}x</p>
+                <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLORS[metricDot(m.grm, c.maxGrm, false)]}`} />
+              </div>
             </div>
             <div>
-              <p className="text-xs text-gray-500 mb-0.5">Annual Rent</p>
-              <p className="font-semibold">{fmt(deal.monthlyRent * 12)}</p>
+              <p className="text-xs text-gray-500 mb-0.5">DSCR</p>
+              <div className="flex items-center gap-1.5">
+                <p className="font-semibold">{m.dscr === 999 ? "∞" : m.dscr.toFixed(2)}x</p>
+                <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLORS[metricDot(m.dscr, c.minDscr)]}`} />
+              </div>
             </div>
           </div>
         </div>
@@ -189,25 +216,33 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             <p className="text-sm text-gray-600 whitespace-pre-wrap">{deal.notes}</p>
           </div>
         )}
+
+        {/* Comments */}
+        <DealComments dealId={deal.id} currentUserId={session.user.id!} />
+
+        {/* Activity Timeline */}
+        <DealActivity dealId={deal.id} />
       </main>
     </div>
   )
 }
 
 function BigMetric({
-  label, tooltip, value, sub, positive,
+  label, tooltip, value, sub, positive, dot,
 }: {
   label: string
   tooltip: string
   value: string
   sub: string
   positive: boolean
+  dot: "green" | "amber" | "red"
 }) {
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-5">
-      <p className="text-xs text-gray-500 mb-1 flex items-center">
+      <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
         {label}
         <InfoTooltip content={tooltip} />
+        <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLORS[dot]}`} />
       </p>
       <p className={`text-xl font-bold ${positive ? "text-green-600" : "text-red-500"}`}>{value}</p>
       <p className="text-xs text-gray-400 mt-0.5">{sub}</p>

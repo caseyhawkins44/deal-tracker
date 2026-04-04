@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { analyzeDeal, fmt, fmtPct } from "@/lib/calculations"
+import { metricDot, type InvestmentCriteriaType } from "@/lib/criteria"
 import DealsMapClient from "./DealsMapClient"
 
 export type SerializedDeal = {
@@ -39,16 +40,41 @@ const STATUS_COLORS: Record<string, string> = {
   Passed: "bg-gray-100 text-gray-600",
 }
 
-function Metric({ label, value, positive }: { label: string; value: string; positive: boolean }) {
+const DOT_COLORS = {
+  green: "bg-green-500",
+  amber: "bg-amber-400",
+  red: "bg-red-500",
+}
+
+function Metric({
+  label,
+  value,
+  positive,
+  dot,
+}: {
+  label: string
+  value: string
+  positive: boolean
+  dot: "green" | "amber" | "red"
+}) {
   return (
     <div>
       <p className="text-xs text-gray-500 mb-0.5">{label}</p>
-      <p className={`text-sm font-semibold ${positive ? "text-green-600" : "text-red-500"}`}>{value}</p>
+      <div className="flex items-center gap-1">
+        <p className={`text-sm font-semibold ${positive ? "text-green-600" : "text-red-500"}`}>{value}</p>
+        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${DOT_COLORS[dot]}`} />
+      </div>
     </div>
   )
 }
 
-export default function DealsView({ deals }: { deals: SerializedDeal[] }) {
+export default function DealsView({
+  deals,
+  criteria,
+}: {
+  deals: SerializedDeal[]
+  criteria: InvestmentCriteriaType
+}) {
   const [view, setView] = useState<"list" | "map">("list")
 
   return (
@@ -105,10 +131,30 @@ export default function DealsView({ deals }: { deals: SerializedDeal[] }) {
                   <p className="text-lg font-bold text-gray-900">{fmt(deal.purchasePrice)}</p>
                 </div>
                 <div className="grid grid-cols-4 gap-3 mt-4 pt-4 border-t border-gray-100">
-                  <Metric label="Cash Flow/mo" value={fmt(m.monthlyCashFlow)} positive={isPositive} />
-                  <Metric label="Cap Rate" value={fmtPct(m.capRate)} positive={m.capRate >= 5} />
-                  <Metric label="Cash-on-Cash" value={fmtPct(m.cashOnCash)} positive={m.cashOnCash >= 8} />
-                  <Metric label="Gross Yield" value={fmtPct(m.grossYield)} positive={m.grossYield >= 8} />
+                  <Metric
+                    label="Cash Flow/mo"
+                    value={fmt(m.monthlyCashFlow)}
+                    positive={isPositive}
+                    dot={metricDot(m.monthlyCashFlow, criteria.minMonthlyCashFlow)}
+                  />
+                  <Metric
+                    label="Cap Rate"
+                    value={fmtPct(m.capRate)}
+                    positive={m.capRate >= 5}
+                    dot={metricDot(m.capRate, criteria.minCapRate)}
+                  />
+                  <Metric
+                    label="Cash-on-Cash"
+                    value={fmtPct(m.cashOnCash)}
+                    positive={m.cashOnCash >= 8}
+                    dot={metricDot(m.cashOnCash, criteria.minCashOnCash)}
+                  />
+                  <Metric
+                    label="Gross Yield"
+                    value={fmtPct(m.grossYield)}
+                    positive={m.grossYield >= 8}
+                    dot={metricDot(m.grossYield, criteria.minCapRate)}
+                  />
                 </div>
               </Link>
             )

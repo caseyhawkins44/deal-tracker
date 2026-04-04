@@ -5,15 +5,21 @@ import Link from "next/link"
 import NavBar from "@/components/NavBar"
 import DealsView from "@/components/DealsView"
 import type { SerializedDeal } from "@/components/DealsView"
+import { DEFAULT_CRITERIA } from "@/lib/criteria"
 
 export default async function DealsPage() {
   const session = await auth()
   if (!session?.user) redirect("/login")
 
-  const deals = await prisma.deal.findMany({
-    include: { addedBy: { select: { name: true } } },
-    orderBy: { createdAt: "desc" },
-  })
+  const [deals, criteriaRow] = await Promise.all([
+    prisma.deal.findMany({
+      include: { addedBy: { select: { name: true } } },
+      orderBy: { createdAt: "desc" },
+    }),
+    prisma.investmentCriteria.findUnique({ where: { id: "singleton" } }),
+  ])
+
+  const criteria = criteriaRow ?? DEFAULT_CRITERIA
 
   const serialized: SerializedDeal[] = deals.map((d) => ({
     id: d.id,
@@ -82,7 +88,7 @@ export default async function DealsPage() {
             </Link>
           </div>
         ) : (
-          <DealsView deals={serialized} />
+          <DealsView deals={serialized} criteria={criteria} />
         )}
       </main>
     </div>
