@@ -89,6 +89,13 @@ export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id:
 
   try {
     const { id } = await params
+    const [deal, me] = await Promise.all([
+      prisma.deal.findUnique({ where: { id }, select: { addedById: true } }),
+      prisma.user.findUnique({ where: { id: session.user.id }, select: { role: true } }),
+    ])
+    if (!deal) return NextResponse.json({ error: "Not found" }, { status: 404 })
+    if (deal.addedById !== session.user.id && me?.role !== "admin")
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     await prisma.deal.delete({ where: { id } })
     return NextResponse.json({ success: true })
   } catch (e) {

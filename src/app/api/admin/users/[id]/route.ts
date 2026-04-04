@@ -23,11 +23,13 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     if (body.role !== undefined) {
       if (!["admin", "partner"].includes(body.role))
         return NextResponse.json({ error: "Invalid role" }, { status: 400 })
+      if (id === session.user.id && body.role !== "admin")
+        return NextResponse.json({ error: "Cannot remove your own admin role" }, { status: 400 })
       data.role = body.role
     }
 
     if (body.newPassword !== undefined) {
-      if (body.newPassword.length < 8)
+      if (typeof body.newPassword !== "string" || body.newPassword.length < 8)
         return NextResponse.json({ error: "Password must be at least 8 characters" }, { status: 400 })
       data.password = await bcrypt.hash(body.newPassword, 12)
     }

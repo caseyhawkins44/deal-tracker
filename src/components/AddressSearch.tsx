@@ -42,19 +42,23 @@ export default function AddressSearch({ value, onChange, onSelect, className }: 
     if (debounce.current) clearTimeout(debounce.current)
     if (v.length < 4) { setSuggestions([]); return }
 
+    let cancelled = false
     debounce.current = setTimeout(async () => {
       setLoading(true)
       try {
         const res = await fetch(`/api/address-search?q=${encodeURIComponent(v)}`)
         const data = await res.json()
-        setSuggestions(data)
-        setOpen(data.length > 0)
+        if (!cancelled) {
+          setSuggestions(data)
+          setOpen(data.length > 0)
+        }
       } catch {
-        setSuggestions([])
+        if (!cancelled) setSuggestions([])
       } finally {
-        setLoading(false)
+        if (!cancelled) setLoading(false)
       }
     }, 400)
+    return () => { cancelled = true }
   }
 
   function handleSelect(s: Suggestion) {

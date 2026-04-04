@@ -121,6 +121,10 @@ model Deal {
   comments Comment[]
   votes    Vote[]
   activity ActivityLog[]
+
+  @@index([addedById])
+  @@index([status])
+  @@index([createdAt])
 }
 
 model Comment {
@@ -132,6 +136,8 @@ model Comment {
   user      User     @relation(fields: [userId], references: [id])
   userId    String
   createdAt DateTime @default(now())
+
+  @@index([dealId])
 }
 
 model Vote {
@@ -146,6 +152,7 @@ model Vote {
   updatedAt DateTime   @updatedAt
 
   @@unique([dealId, userId])
+  @@index([dealId])
 }
 
 model ActivityLog {
@@ -157,6 +164,9 @@ model ActivityLog {
   user        User           @relation(fields: [userId], references: [id])
   userId      String
   createdAt   DateTime       @default(now())
+
+  @@index([dealId])
+  @@index([createdAt])
 }
 
 model InvestmentCriteria {

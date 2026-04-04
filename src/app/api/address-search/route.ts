@@ -19,7 +19,7 @@ export async function GET(req: NextRequest) {
   if (!session?.user) return NextResponse.json([], { status: 401 })
 
   const q = req.nextUrl.searchParams.get("q") ?? ""
-  if (q.length < 4) return NextResponse.json([])
+  if (q.length < 4 || q.length > 200) return NextResponse.json([])
 
   const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(q)}&addressdetails=1&countrycodes=us&limit=6`
 

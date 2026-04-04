@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect, useCallback } from "react"
+import { timeAgo } from "@/lib/timeAgo"
 
 type VoteOption = "GO" | "NO_GO" | "NEED_MORE_INFO"
 
@@ -36,18 +37,6 @@ const VOTE_BTN_ACTIVE: Record<VoteOption, string> = {
   GO: "bg-green-600 text-white border-green-600",
   NO_GO: "bg-red-600 text-white border-red-600",
   NEED_MORE_INFO: "bg-amber-500 text-white border-amber-500",
-}
-
-function timeAgo(date: string) {
-  const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
-  if (seconds < 60) return "just now"
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  if (days < 30) return `${days}d ago`
-  return `${Math.floor(days / 30)}mo ago`
 }
 
 export default function DealVoting({

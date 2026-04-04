@@ -203,7 +203,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             <div>
               <p className="text-xs text-gray-500 mb-0.5">DSCR</p>
               <div className="flex items-center gap-1.5">
-                <p className="font-semibold">{m.dscr === 999 ? "∞" : m.dscr.toFixed(2)}x</p>
+                <p className="font-semibold">{m.dscr === 999 ? "N/A (no debt)" : m.dscr.toFixed(2) + "x"}</p>
                 <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLORS[metricDot(m.dscr, c.minDscr)]}`} />
               </div>
             </div>

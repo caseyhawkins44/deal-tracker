@@ -4,6 +4,7 @@ import { redirect } from "next/navigation"
 import Link from "next/link"
 import NavBar from "@/components/NavBar"
 import { analyzeDeal, fmt, fmtPct } from "@/lib/calculations"
+import { timeAgo } from "@/lib/timeAgo"
 
 const STATUSES = ["Prospecting", "Under Analysis", "Offer Made", "Passed"]
 
@@ -21,18 +22,6 @@ const ACTION_LABELS: Record<string, string> = {
   COMMENT_ADDED: "Comment posted",
   VOTE_CAST: "Vote cast",
   VOTE_CHANGED: "Vote changed",
-}
-
-function timeAgo(date: Date | string) {
-  const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
-  if (seconds < 60) return "just now"
-  const minutes = Math.floor(seconds / 60)
-  if (minutes < 60) return `${minutes}m ago`
-  const hours = Math.floor(minutes / 60)
-  if (hours < 24) return `${hours}h ago`
-  const days = Math.floor(hours / 24)
-  if (days < 30) return `${days}d ago`
-  return `${Math.floor(days / 30)}mo ago`
 }
 
 export default async function DashboardPage() {
