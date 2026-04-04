@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { signOut } from "next-auth/react"
 
-type User = { name?: string | null; email?: string | null }
+type User = { name?: string | null; email?: string | null; role?: string | null }
 
 export default function NavBar({ user }: { user: User }) {
   return (
@@ -28,6 +28,11 @@ export default function NavBar({ user }: { user: User }) {
           <Link href="/bookmarklet" className="text-sm text-gray-600 hover:text-gray-900">
             Zillow Import
           </Link>
+          {user.role === "admin" && (
+            <Link href="/admin" className="text-sm text-purple-600 hover:text-purple-800 font-medium">
+              Admin
+            </Link>
+          )}
         </div>
         <div className="flex items-center gap-4">
           <span className="text-sm text-gray-500">{user.name ?? user.email}</span>

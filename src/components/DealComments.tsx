@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useRef } from "react"
 
 type Comment = {
   id: string
@@ -10,6 +10,8 @@ type Comment = {
   user: { name: string | null; email: string | null }
   userId: string
 }
+
+type UserOption = { id: string; name: string | null; email: string }
 
 function timeAgo(date: string) {
   const seconds = Math.floor((Date.now() - new Date(date).getTime()) / 1000)
@@ -48,6 +50,20 @@ export default function DealComments({
   const [posting, setPosting] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
 
+  // @mention state
+  const [allUsers, setAllUsers] = useState<UserOption[]>([])
+  const [mentionQuery, setMentionQuery] = useState<string | null>(null)
+  const [mentionStart, setMentionStart] = useState(0)
+  const [mentionIndex, setMentionIndex] = useState(0)
+  const textareaRef = useRef<HTMLTextAreaElement>(null)
+
+  const mentionMatches =
+    mentionQuery !== null
+      ? allUsers.filter((u) =>
+          (u.name ?? u.email).toLowerCase().startsWith(mentionQuery.toLowerCase())
+        )
+      : []
+
   const load = useCallback(async () => {
     const res = await fetch(`/api/deals/${dealId}/comments`)
     if (res.ok) setComments(await res.json())
@@ -55,6 +71,64 @@ export default function DealComments({
   }, [dealId])
 
   useEffect(() => { load() }, [load])
+
+  useEffect(() => {
+    fetch("/api/users")
+      .then((r) => r.json())
+      .then(setAllUsers)
+      .catch(() => {})
+  }, [])
+
+  function handleBodyChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    const val = e.target.value
+    setBody(val)
+
+    const cursor = e.target.selectionStart ?? val.length
+    // Find the @ that triggered a mention (last @ before cursor with no space after)
+    const before = val.slice(0, cursor)
+    const atMatch = before.match(/@(\w*)$/)
+    if (atMatch) {
+      setMentionQuery(atMatch[1])
+      setMentionStart(cursor - atMatch[0].length)
+      setMentionIndex(0)
+    } else {
+      setMentionQuery(null)
+    }
+  }
+
+  function insertMention(user: UserOption) {
+    const label = (user.name ?? user.email).replace(/\s+/g, "")
+    const before = body.slice(0, mentionStart)
+    const after = body.slice(textareaRef.current?.selectionStart ?? body.length)
+    const inserted = `${before}@${label} ${after}`
+    setBody(inserted)
+    setMentionQuery(null)
+    // Restore focus
+    requestAnimationFrame(() => {
+      if (textareaRef.current) {
+        const pos = before.length + label.length + 2
+        textareaRef.current.focus()
+        textareaRef.current.setSelectionRange(pos, pos)
+      }
+    })
+  }
+
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (mentionQuery === null || mentionMatches.length === 0) return
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault()
+      setMentionIndex((i) => (i + 1) % mentionMatches.length)
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault()
+      setMentionIndex((i) => (i - 1 + mentionMatches.length) % mentionMatches.length)
+    } else if (e.key === "Enter" || e.key === "Tab") {
+      e.preventDefault()
+      insertMention(mentionMatches[mentionIndex])
+    } else if (e.key === "Escape") {
+      setMentionQuery(null)
+    }
+  }
 
   async function post() {
     if (!body.trim()) return
@@ -66,6 +140,7 @@ export default function DealComments({
     })
     if (res.ok) {
       setBody("")
+      setMentionQuery(null)
       await load()
     }
     setPosting(false)
@@ -127,18 +202,8 @@ export default function DealComments({
                     deleteTarget === c.id ? (
                       <span className="flex items-center gap-1 text-xs">
                         <span className="text-gray-500">Delete?</span>
-                        <button
-                          onClick={() => confirmDelete(c.id)}
-                          className="text-red-600 font-medium hover:underline"
-                        >
-                          Yes
-                        </button>
-                        <button
-                          onClick={() => setDeleteTarget(null)}
-                          className="text-gray-500 hover:underline"
-                        >
-                          No
-                        </button>
+                        <button onClick={() => confirmDelete(c.id)} className="text-red-600 font-medium hover:underline">Yes</button>
+                        <button onClick={() => setDeleteTarget(null)} className="text-gray-500 hover:underline">No</button>
                       </span>
                     ) : (
                       <button
@@ -157,14 +222,36 @@ export default function DealComments({
         </div>
       )}
 
-      <div className="space-y-2">
+      {/* Compose area */}
+      <div className="space-y-2 relative">
         <textarea
+          ref={textareaRef}
           rows={3}
-          placeholder="Add a comment… Use @Name to mention a partner"
+          placeholder="Add a comment… Type @ to mention a partner"
           value={body}
-          onChange={(e) => setBody(e.target.value)}
+          onChange={handleBodyChange}
+          onKeyDown={handleKeyDown}
           className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
         />
+
+        {/* @mention dropdown */}
+        {mentionQuery !== null && mentionMatches.length > 0 && (
+          <div className="absolute bottom-full mb-1 left-0 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-20 w-56">
+            {mentionMatches.map((u, i) => (
+              <button
+                key={u.id}
+                onMouseDown={(e) => { e.preventDefault(); insertMention(u) }}
+                className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                  i === mentionIndex ? "bg-blue-50 text-blue-700" : "text-gray-700 hover:bg-gray-50"
+                }`}
+              >
+                <span className="font-medium">{u.name ?? u.email}</span>
+                {u.name && <span className="text-xs text-gray-400 ml-1">{u.email}</span>}
+              </button>
+            ))}
+          </div>
+        )}
+
         <button
           onClick={post}
           disabled={posting || !body.trim()}
