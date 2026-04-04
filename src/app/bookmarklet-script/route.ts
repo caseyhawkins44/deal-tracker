@@ -5,7 +5,7 @@ import { NextResponse } from "next/server"
 // and we can update the extraction logic without the user needing to re-drag anything.
 const script = `
 (function(){
-  var APP = '${process.env.NEXTAUTH_URL || "http://localhost:3000"}';
+  var APP = '${process.env.NEXTAUTH_URL || "http://localhost:3000"}'.replace(/\/$/, '');
   var tm = {SINGLE_FAMILY:'Single Family',CONDO:'Condo',TOWNHOUSE:'Townhouse',MULTI_FAMILY:'Multi Family',APARTMENT:'Multi Family',LOT:'Land',LAND:'Land',MANUFACTURED:'Single Family',MOBILE:'Single Family'};
 
   function val(obj) {
