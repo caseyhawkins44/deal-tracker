@@ -10,6 +10,7 @@ import DealActivity from "@/components/DealActivity"
 import { analyzeDeal, fmt, fmtPct } from "@/lib/calculations"
 import { DEFAULT_CRITERIA, metricDot, type InvestmentCriteriaType } from "@/lib/criteria"
 import DeleteDealButton from "@/components/DeleteDealButton"
+import ZillowRefreshButton from "@/components/ZillowRefreshButton"
 
 const TOOLTIPS = {
   cashFlow:
@@ -72,14 +73,17 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
               )}
             </div>
           </div>
-          <div className="flex gap-2">
-            <Link
-              href={`/deals/${deal.id}/edit`}
-              className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
-            >
-              Edit
-            </Link>
-            <DeleteDealButton dealId={deal.id} />
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex gap-2">
+              <Link
+                href={`/deals/${deal.id}/edit`}
+                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
+              >
+                Edit
+              </Link>
+              <DeleteDealButton dealId={deal.id} />
+            </div>
+            {deal.zillowUrl && <ZillowRefreshButton dealId={deal.id} />}
           </div>
         </div>
 
