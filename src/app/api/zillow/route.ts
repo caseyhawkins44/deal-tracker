@@ -55,6 +55,7 @@ export async function POST(req: NextRequest) {
   const propertyType = HOME_TYPE_MAP[details.homeType ?? ""] ?? "Single Family"
   const propertyTax = details.resoFacts?.taxAnnualAmount ?? 0  // annual, matches form field
   const hoaFees = details.resoFacts?.hoaFee ?? details.resoFacts?.associationFee ?? 0
+  const monthlyRent = details.resoFacts?.totalActualRent ?? 0
 
   const name = streetAddress ? `${streetAddress}, ${city}` : "New Deal"
 
@@ -68,6 +69,7 @@ export async function POST(req: NextRequest) {
     purchasePrice,
     propertyTax,
     hoaFees,
+    monthlyRent,
     zillowUrl: url,
   })
 }

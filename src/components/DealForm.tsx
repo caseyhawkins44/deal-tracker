@@ -139,6 +139,7 @@ export default function DealForm({
       ...(data.purchasePrice && { purchasePrice: data.purchasePrice }),
       ...(data.propertyTax && { propertyTax: data.propertyTax }),
       ...(data.hoaFees && { hoaFees: data.hoaFees }),
+      ...(data.monthlyRent && { monthlyRent: data.monthlyRent }),
     }))
   }
 
