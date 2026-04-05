@@ -120,7 +120,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             value={fmtPct(m.grossYield)}
             sub="annual rent ÷ purchase price"
             positive={m.grossYield >= 8}
-            dot={metricDot(m.grossYield, c.minCapRate)}
+            dot={metricDot(m.grossYield, 8)}
           />
         </div>
 

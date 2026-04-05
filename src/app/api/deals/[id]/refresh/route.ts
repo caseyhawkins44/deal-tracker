@@ -2,16 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { logActivity } from "@/lib/activity"
-
-const HOME_TYPE_MAP: Record<string, string> = {
-  SINGLE_FAMILY: "Single Family",
-  MULTI_FAMILY: "Multi Family",
-  CONDO: "Condo",
-  TOWNHOUSE: "Townhouse",
-  MANUFACTURED: "Manufactured",
-  LOT: "Lot",
-  APARTMENT: "Apartment",
-}
+import { HOME_TYPE_MAP } from "@/lib/homeTypeMap"
 
 export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()

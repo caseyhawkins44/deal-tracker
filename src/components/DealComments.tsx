@@ -136,14 +136,14 @@ export default function DealComments({
   }
 
   async function toggleFlag(id: string) {
-    await fetch(`/api/comments/${id}/flag`, { method: "PATCH" })
-    await load()
+    const res = await fetch(`/api/comments/${id}/flag`, { method: "PATCH" })
+    if (res.ok) await load()
   }
 
   async function confirmDelete(id: string) {
-    await fetch(`/api/comments/${id}`, { method: "DELETE" })
+    const res = await fetch(`/api/comments/${id}`, { method: "DELETE" })
     setDeleteTarget(null)
-    await load()
+    if (res.ok) await load()
   }
 
   return (

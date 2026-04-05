@@ -138,6 +138,7 @@ model Comment {
   createdAt DateTime @default(now())
 
   @@index([dealId])
+  @@index([userId])
 }
 
 model Vote {

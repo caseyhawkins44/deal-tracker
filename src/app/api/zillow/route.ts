@@ -1,17 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
-
-const HOME_TYPE_MAP: Record<string, string> = {
-  SINGLE_FAMILY: "Single Family",
-  MULTI_FAMILY: "Multi Family",
-  CONDO: "Condo",
-  TOWNHOUSE: "Townhouse",
-  MANUFACTURED: "Single Family",
-  MOBILE: "Single Family",
-  LOT: "Land",
-  LAND: "Land",
-  APARTMENT: "Multi Family",
-}
+import { HOME_TYPE_MAP } from "@/lib/homeTypeMap"
 
 export async function POST(req: NextRequest) {
   const session = await auth()

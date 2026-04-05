@@ -15,14 +15,6 @@ const STATUS_COLORS: Record<string, string> = {
   Passed: "bg-gray-50 text-gray-600 border-gray-200",
 }
 
-const ACTION_LABELS: Record<string, string> = {
-  DEAL_CREATED: "Deal added",
-  STATUS_CHANGED: "Status changed",
-  FINANCIALS_EDITED: "Financials updated",
-  COMMENT_ADDED: "Comment posted",
-  VOTE_CAST: "Vote cast",
-  VOTE_CHANGED: "Vote changed",
-}
 
 export default async function DashboardPage() {
   const session = await auth()
