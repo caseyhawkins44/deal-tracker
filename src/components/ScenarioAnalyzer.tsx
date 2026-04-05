@@ -11,39 +11,14 @@ function makeScenario(base: Deal, name: string): Scenario {
   return { ...base, name }
 }
 
-function NumInput({
-  value,
-  onChange,
-  prefix,
-  suffix,
-  step = 0.5,
-  min = 0,
-}: {
-  value: number
-  onChange: (v: number) => void
-  prefix?: string
-  suffix?: string
-  step?: number
-  min?: number
-}) {
-  return (
-    <div className="flex items-center">
-      {prefix && <span className="text-xs text-gray-400 mr-0.5">{prefix}</span>}
-      <input
-        type="number"
-        value={value}
-        min={min}
-        step={step}
-        onChange={e => onChange(parseFloat(e.target.value) || 0)}
-        className="w-full border border-gray-200 rounded px-2 py-1 text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-400"
-      />
-      {suffix && <span className="text-xs text-gray-400 ml-0.5">{suffix}</span>}
-    </div>
-  )
-}
+const inputCls = "w-full border border-gray-200 rounded px-2 py-1 text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white"
 
-const CASH_COLORS = (v: number) => v >= 200 ? "text-green-600" : v >= 0 ? "text-amber-600" : "text-red-500"
-const PCT_COLORS = (v: number, threshold: number) => v >= threshold ? "text-green-600" : v >= threshold * 0.8 ? "text-amber-600" : "text-red-500"
+function cashColor(v: number) {
+  return v >= 200 ? "text-green-600" : v >= 0 ? "text-amber-600" : "text-red-500"
+}
+function pctColor(v: number, threshold: number) {
+  return v >= threshold ? "text-green-600" : v >= threshold * 0.8 ? "text-amber-600" : "text-red-500"
+}
 
 export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
   const [scenarios, setScenarios] = useState<Scenario[]>([
@@ -51,7 +26,7 @@ export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
     makeScenario(deal, "Scenario 2"),
   ])
 
-  function updateScenario(i: number, field: keyof Scenario, value: string | number) {
+  function update(i: number, field: keyof Scenario, value: string | number) {
     setScenarios(s => s.map((sc, idx) => idx === i ? { ...sc, [field]: value } : sc))
   }
 
@@ -64,14 +39,13 @@ export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
   }
 
   const results = scenarios.map(s => analyzeDeal(s))
-
-  const colWidth = scenarios.length === 3 ? "w-36" : "w-44"
+  const n = scenarios.length
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
       <div className="flex items-center justify-between mb-1">
         <h2 className="font-semibold text-gray-900">Scenario Analysis</h2>
-        {scenarios.length < MAX_SCENARIOS && (
+        {n < MAX_SCENARIOS && (
           <button
             onClick={addScenario}
             className="text-xs text-blue-600 hover:text-blue-700 font-medium border border-blue-200 px-2.5 py-1 rounded-lg hover:bg-blue-50"
@@ -83,152 +57,217 @@ export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
       <p className="text-xs text-gray-400 mb-5">Changes here are for analysis only — nothing is saved to the deal.</p>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm border-separate border-spacing-y-0">
+        <table className="w-full text-sm" style={{ tableLayout: "fixed" }}>
+          <colgroup>
+            <col style={{ width: "140px" }} />
+            {scenarios.map((_, i) => <col key={i} />)}
+          </colgroup>
+
           <thead>
             <tr>
-              <th className="text-left text-xs font-medium text-gray-400 uppercase tracking-wide pr-4 w-40 pb-3" />
+              <th />
               {scenarios.map((sc, i) => (
-                <th key={i} className={`${colWidth} pb-3 px-2`}>
-                  <div className="flex items-center gap-1 justify-between">
+                <th key={i} className="px-2 pb-3 text-left">
+                  <div className="flex items-center gap-1">
                     <input
                       value={sc.name}
-                      onChange={e => updateScenario(i, "name", e.target.value)}
-                      className="font-semibold text-sm text-gray-800 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-400 focus:outline-none w-full"
+                      onChange={e => update(i, "name", e.target.value)}
+                      className="font-semibold text-sm text-gray-800 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-400 focus:outline-none w-full min-w-0"
                     />
-                    {scenarios.length > 2 && (
-                      <button onClick={() => removeScenario(i)} className="text-gray-300 hover:text-red-400 shrink-0 text-xs ml-1">✕</button>
+                    {n > 2 && (
+                      <button onClick={() => removeScenario(i)} className="text-gray-300 hover:text-red-400 shrink-0 text-xs">✕</button>
                     )}
                   </div>
                 </th>
               ))}
             </tr>
           </thead>
+
           <tbody>
-            {/* INPUTS */}
-            <SectionRow label="INPUTS" cols={scenarios.length} />
+            <SectionLabel label="INPUTS" cols={n} />
 
-            <InputRow label="Purchase Price">
+            <Row label="Purchase Price">
               {scenarios.map((sc, i) => (
-                <NumInput key={i} prefix="$" value={sc.purchasePrice} step={1000} onChange={v => updateScenario(i, "purchasePrice", v)} />
+                <td key={i} className="px-2 py-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <span className="text-xs text-gray-400 shrink-0">$</span>
+                    <input type="number" min={0} step={1000} value={sc.purchasePrice}
+                      onChange={e => update(i, "purchasePrice", parseFloat(e.target.value) || 0)}
+                      className={inputCls} />
+                  </div>
+                </td>
               ))}
-            </InputRow>
+            </Row>
 
-            <InputRow label="Down Payment">
+            <Row label="Down Payment">
               {scenarios.map((sc, i) => (
-                <NumInput key={i} suffix="%" value={sc.downPaymentPct} step={1} onChange={v => updateScenario(i, "downPaymentPct", v)} />
+                <td key={i} className="px-2 py-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <input type="number" min={0} max={100} step={1} value={sc.downPaymentPct}
+                      onChange={e => update(i, "downPaymentPct", parseFloat(e.target.value) || 0)}
+                      className={inputCls} />
+                    <span className="text-xs text-gray-400 shrink-0">%</span>
+                  </div>
+                </td>
               ))}
-            </InputRow>
+            </Row>
 
-            <InputRow label="Interest Rate">
+            <Row label="Interest Rate">
               {scenarios.map((sc, i) => (
-                <NumInput key={i} suffix="%" value={sc.interestRate} step={0.125} onChange={v => updateScenario(i, "interestRate", v)} />
+                <td key={i} className="px-2 py-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <input type="number" min={0} max={30} step={0.125} value={sc.interestRate}
+                      onChange={e => update(i, "interestRate", parseFloat(e.target.value) || 0)}
+                      className={inputCls} />
+                    <span className="text-xs text-gray-400 shrink-0">%</span>
+                  </div>
+                </td>
               ))}
-            </InputRow>
+            </Row>
 
-            <InputRow label="Loan Term">
+            <Row label="Loan Term">
               {scenarios.map((sc, i) => (
-                <td key={i} className={`${colWidth} py-1.5 px-2`}>
-                  <select
-                    value={sc.loanTermYears}
-                    onChange={e => updateScenario(i, "loanTermYears", parseInt(e.target.value))}
-                    className="w-full border border-gray-200 rounded px-2 py-1 text-sm focus:outline-none focus:ring-1 focus:ring-blue-400"
-                  >
+                <td key={i} className="px-2 py-1.5">
+                  <select value={sc.loanTermYears}
+                    onChange={e => update(i, "loanTermYears", parseInt(e.target.value))}
+                    className={inputCls}>
                     <option value={15}>15 yr</option>
                     <option value={20}>20 yr</option>
                     <option value={30}>30 yr</option>
                   </select>
                 </td>
               ))}
-            </InputRow>
+            </Row>
 
-            <InputRow label="Closing Costs">
+            <Row label="Closing Costs">
               {scenarios.map((sc, i) => (
-                <NumInput key={i} prefix="$" value={sc.closingCosts} step={500} onChange={v => updateScenario(i, "closingCosts", v)} />
+                <td key={i} className="px-2 py-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <span className="text-xs text-gray-400 shrink-0">$</span>
+                    <input type="number" min={0} step={500} value={sc.closingCosts}
+                      onChange={e => update(i, "closingCosts", parseFloat(e.target.value) || 0)}
+                      className={inputCls} />
+                  </div>
+                </td>
               ))}
-            </InputRow>
+            </Row>
 
-            <InputRow label="Rehab / Repairs">
+            <Row label="Rehab / Repairs">
               {scenarios.map((sc, i) => (
-                <NumInput key={i} prefix="$" value={sc.rehabCosts} step={500} onChange={v => updateScenario(i, "rehabCosts", v)} />
+                <td key={i} className="px-2 py-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <span className="text-xs text-gray-400 shrink-0">$</span>
+                    <input type="number" min={0} step={500} value={sc.rehabCosts}
+                      onChange={e => update(i, "rehabCosts", parseFloat(e.target.value) || 0)}
+                      className={inputCls} />
+                  </div>
+                </td>
               ))}
-            </InputRow>
+            </Row>
 
-            <InputRow label="Monthly Rent">
+            <Row label="Monthly Rent">
               {scenarios.map((sc, i) => (
-                <NumInput key={i} prefix="$" value={sc.monthlyRent} step={50} onChange={v => updateScenario(i, "monthlyRent", v)} />
+                <td key={i} className="px-2 py-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <span className="text-xs text-gray-400 shrink-0">$</span>
+                    <input type="number" min={0} step={50} value={sc.monthlyRent}
+                      onChange={e => update(i, "monthlyRent", parseFloat(e.target.value) || 0)}
+                      className={inputCls} />
+                  </div>
+                </td>
               ))}
-            </InputRow>
+            </Row>
 
-            <InputRow label="Vacancy Rate">
+            <Row label="Vacancy Rate">
               {scenarios.map((sc, i) => (
-                <NumInput key={i} suffix="%" value={sc.vacancyRate} step={1} onChange={v => updateScenario(i, "vacancyRate", v)} />
+                <td key={i} className="px-2 py-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <input type="number" min={0} max={100} step={1} value={sc.vacancyRate}
+                      onChange={e => update(i, "vacancyRate", parseFloat(e.target.value) || 0)}
+                      className={inputCls} />
+                    <span className="text-xs text-gray-400 shrink-0">%</span>
+                  </div>
+                </td>
               ))}
-            </InputRow>
+            </Row>
 
-            <InputRow label="Mgmt Fee">
+            <Row label="Mgmt Fee">
               {scenarios.map((sc, i) => (
-                <NumInput key={i} suffix="%" value={sc.managementFee} step={1} onChange={v => updateScenario(i, "managementFee", v)} />
+                <td key={i} className="px-2 py-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <input type="number" min={0} max={30} step={1} value={sc.managementFee}
+                      onChange={e => update(i, "managementFee", parseFloat(e.target.value) || 0)}
+                      className={inputCls} />
+                    <span className="text-xs text-gray-400 shrink-0">%</span>
+                  </div>
+                </td>
               ))}
-            </InputRow>
+            </Row>
 
-            <InputRow label="Annual Tax">
+            <Row label="Insurance /mo">
               {scenarios.map((sc, i) => (
-                <NumInput key={i} prefix="$" value={sc.propertyTax} step={100} onChange={v => updateScenario(i, "propertyTax", v)} />
+                <td key={i} className="px-2 py-1.5">
+                  <div className="flex items-center gap-0.5">
+                    <span className="text-xs text-gray-400 shrink-0">$</span>
+                    <input type="number" min={0} step={25} value={sc.insurance}
+                      onChange={e => update(i, "insurance", parseFloat(e.target.value) || 0)}
+                      className={inputCls} />
+                  </div>
+                </td>
               ))}
-            </InputRow>
+            </Row>
 
-            {/* OUTPUTS */}
-            <SectionRow label="RESULTS" cols={scenarios.length} />
+            <SectionLabel label="RESULTS" cols={n} />
 
-            <OutputRow label="Total Invested">
+            <ResultRow label="Total Invested" highlight={false}>
               {results.map((r, i) => (
-                <td key={i} className={`${colWidth} py-2 px-2 text-right font-medium text-gray-800`}>{fmt(r.totalInvested)}</td>
+                <td key={i} className="px-2 py-2 text-right font-medium text-gray-800">{fmt(r.totalInvested)}</td>
               ))}
-            </OutputRow>
+            </ResultRow>
 
-            <OutputRow label="Monthly Mortgage">
+            <ResultRow label="Monthly Mortgage" highlight={false}>
               {results.map((r, i) => (
-                <td key={i} className={`${colWidth} py-2 px-2 text-right font-medium text-gray-800`}>{fmt(r.monthlyMortgage)}</td>
+                <td key={i} className="px-2 py-2 text-right font-medium text-gray-700">{fmt(r.monthlyMortgage)}</td>
               ))}
-            </OutputRow>
+            </ResultRow>
 
-            <OutputRow label="Monthly Cash Flow" highlight>
+            <ResultRow label="Monthly Cash Flow" highlight>
               {results.map((r, i) => (
-                <td key={i} className={`${colWidth} py-2 px-2 text-right font-bold ${CASH_COLORS(r.monthlyCashFlow)}`}>{fmt(r.monthlyCashFlow)}</td>
+                <td key={i} className={`px-2 py-2 text-right font-bold ${cashColor(r.monthlyCashFlow)}`}>{fmt(r.monthlyCashFlow)}</td>
               ))}
-            </OutputRow>
+            </ResultRow>
 
-            <OutputRow label="Annual Cash Flow">
+            <ResultRow label="Annual Cash Flow" highlight={false}>
               {results.map((r, i) => (
-                <td key={i} className={`${colWidth} py-2 px-2 text-right font-medium ${r.annualCashFlow >= 0 ? "text-green-600" : "text-red-500"}`}>{fmt(r.annualCashFlow)}</td>
+                <td key={i} className={`px-2 py-2 text-right font-medium ${r.annualCashFlow >= 0 ? "text-green-600" : "text-red-500"}`}>{fmt(r.annualCashFlow)}</td>
               ))}
-            </OutputRow>
+            </ResultRow>
 
-            <OutputRow label="Cap Rate" highlight>
+            <ResultRow label="Cap Rate" highlight>
               {results.map((r, i) => (
-                <td key={i} className={`${colWidth} py-2 px-2 text-right font-bold ${PCT_COLORS(r.capRate, 6)}`}>{fmtPct(r.capRate)}</td>
+                <td key={i} className={`px-2 py-2 text-right font-bold ${pctColor(r.capRate, 6)}`}>{fmtPct(r.capRate)}</td>
               ))}
-            </OutputRow>
+            </ResultRow>
 
-            <OutputRow label="Cash-on-Cash" highlight>
+            <ResultRow label="Cash-on-Cash" highlight>
               {results.map((r, i) => (
-                <td key={i} className={`${colWidth} py-2 px-2 text-right font-bold ${PCT_COLORS(r.cashOnCash, 8)}`}>{fmtPct(r.cashOnCash)}</td>
+                <td key={i} className={`px-2 py-2 text-right font-bold ${pctColor(r.cashOnCash, 8)}`}>{fmtPct(r.cashOnCash)}</td>
               ))}
-            </OutputRow>
+            </ResultRow>
 
-            <OutputRow label="Gross Yield">
+            <ResultRow label="Gross Yield" highlight={false}>
               {results.map((r, i) => (
-                <td key={i} className={`${colWidth} py-2 px-2 text-right font-medium ${PCT_COLORS(r.grossYield, 8)}`}>{fmtPct(r.grossYield)}</td>
+                <td key={i} className={`px-2 py-2 text-right font-medium ${pctColor(r.grossYield, 8)}`}>{fmtPct(r.grossYield)}</td>
               ))}
-            </OutputRow>
+            </ResultRow>
 
-            <OutputRow label="DSCR">
+            <ResultRow label="DSCR" highlight={false}>
               {results.map((r, i) => (
-                <td key={i} className={`${colWidth} py-2 px-2 text-right font-medium ${PCT_COLORS(r.dscr === 999 ? 999 : r.dscr, 1.25)}`}>
+                <td key={i} className={`px-2 py-2 text-right font-medium ${pctColor(r.dscr === 999 ? 999 : r.dscr, 1.25)}`}>
                   {r.dscr === 999 ? "N/A" : r.dscr.toFixed(2) + "x"}
                 </td>
               ))}
-            </OutputRow>
+            </ResultRow>
           </tbody>
         </table>
       </div>
@@ -236,29 +275,29 @@ export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
   )
 }
 
-function SectionRow({ label, cols }: { label: string; cols: number }) {
+function SectionLabel({ label, cols }: { label: string; cols: number }) {
   return (
     <tr>
-      <td colSpan={cols + 1} className="pt-4 pb-1">
+      <td colSpan={cols + 1} className="pt-5 pb-1.5 border-t border-gray-100">
         <span className="text-[10px] font-semibold text-gray-400 uppercase tracking-widest">{label}</span>
       </td>
     </tr>
   )
 }
 
-function InputRow({ label, children }: { label: string; children: React.ReactNode }) {
+function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <tr className="hover:bg-gray-50">
-      <td className="text-xs text-gray-500 pr-4 py-1.5 whitespace-nowrap">{label}</td>
+    <tr className="hover:bg-gray-50/60">
+      <td className="text-xs text-gray-500 py-1.5 pr-2 whitespace-nowrap">{label}</td>
       {children}
     </tr>
   )
 }
 
-function OutputRow({ label, highlight, children }: { label: string; highlight?: boolean; children: React.ReactNode }) {
+function ResultRow({ label, highlight, children }: { label: string; highlight: boolean; children: React.ReactNode }) {
   return (
     <tr className={highlight ? "bg-gray-50" : ""}>
-      <td className={`text-xs pr-4 py-2 whitespace-nowrap ${highlight ? "font-medium text-gray-700" : "text-gray-500"}`}>{label}</td>
+      <td className={`text-xs py-2 pr-2 whitespace-nowrap ${highlight ? "font-medium text-gray-700" : "text-gray-500"}`}>{label}</td>
       {children}
     </tr>
   )
