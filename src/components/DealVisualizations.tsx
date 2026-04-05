@@ -4,7 +4,7 @@ import { useState, useEffect } from "react"
 import {
   PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer,
   AreaChart, Area, XAxis, YAxis, CartesianGrid,
-  ComposedChart, Bar, Line,
+  ComposedChart, BarChart, Bar, Line,
 } from "recharts"
 import { analyzeDeal, fmt, fmtPct, type Deal } from "@/lib/calculations"
 
@@ -66,6 +66,31 @@ export default function DealVisualizations({ deal }: { deal: Deal }) {
 
 type M = ReturnType<typeof analyzeDeal>
 
+type WaterfallEntry = {
+  name: string
+  base: number
+  value: number
+  type: "start" | "expense" | "result"
+  raw: number // signed amount for tooltip
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function WaterfallTooltip({ active, payload }: any) {
+  if (!active || !payload?.length) return null
+  const entry: WaterfallEntry = payload[0]?.payload
+  if (!entry) return null
+  const isExpense = entry.type === "expense"
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-lg px-3 py-2 text-sm">
+      <p className="font-medium text-gray-800 mb-0.5">{entry.name}</p>
+      <p className={isExpense ? "text-red-500" : entry.raw >= 0 ? "text-green-600" : "text-red-500"}>
+        {isExpense ? "−" : ""}
+        {fmt(Math.abs(entry.raw))}
+      </p>
+    </div>
+  )
+}
+
 function ExpenseWaterfall({ deal, m }: { deal: Deal; m: M }) {
   const grossRent = deal.monthlyRent
   if (grossRent === 0) {
@@ -76,77 +101,68 @@ function ExpenseWaterfall({ deal, m }: { deal: Deal; m: M }) {
   const mgmtFee = m.effectiveRent * (deal.managementFee / 100)
   const vacancyLoss = grossRent * (deal.vacancyRate / 100)
 
-  const steps: { label: string; amount: number; type: "start" | "expense" | "result" }[] = [
-    { label: "Gross Rent", amount: grossRent, type: "start" },
-  ]
-  if (vacancyLoss > 0) steps.push({ label: `Vacancy (${deal.vacancyRate}%)`, amount: vacancyLoss, type: "expense" })
-  if (propTax > 0) steps.push({ label: "Property Tax", amount: propTax, type: "expense" })
-  if (deal.insurance > 0) steps.push({ label: "Insurance", amount: deal.insurance, type: "expense" })
-  if (deal.maintenance > 0) steps.push({ label: "Maintenance", amount: deal.maintenance, type: "expense" })
-  if (deal.utilities > 0) steps.push({ label: "Utilities", amount: deal.utilities, type: "expense" })
-  if (deal.hoaFees > 0) steps.push({ label: "HOA Fees", amount: deal.hoaFees, type: "expense" })
-  if (mgmtFee > 0) steps.push({ label: `Mgmt Fee (${deal.managementFee}%)`, amount: mgmtFee, type: "expense" })
-  steps.push({ label: "Mortgage (P&I)", amount: m.monthlyMortgage, type: "expense" })
-  steps.push({ label: "Net Cash Flow", amount: m.monthlyCashFlow, type: "result" })
-
   let running = grossRent
+  const data: WaterfallEntry[] = []
+
+  data.push({ name: "Gross Rent", base: 0, value: grossRent, type: "start", raw: grossRent })
+
+  const addExpense = (name: string, amount: number) => {
+    if (amount <= 0) return
+    running -= amount
+    data.push({ name, base: Math.max(0, running), value: amount, type: "expense", raw: -amount })
+  }
+
+  if (vacancyLoss > 0) addExpense(`Vacancy ${deal.vacancyRate}%`, vacancyLoss)
+  if (propTax > 0) addExpense("Property Tax", propTax)
+  if (deal.insurance > 0) addExpense("Insurance", deal.insurance)
+  if (deal.maintenance > 0) addExpense("Maintenance", deal.maintenance)
+  if (deal.utilities > 0) addExpense("Utilities", deal.utilities)
+  if (deal.hoaFees > 0) addExpense("HOA Fees", deal.hoaFees)
+  if (mgmtFee > 0) addExpense(`Mgmt Fee ${deal.managementFee}%`, mgmtFee)
+  addExpense("Mortgage P&I", m.monthlyMortgage)
+
+  const cf = m.monthlyCashFlow
+  data.push({ name: "Net Cash Flow", base: 0, value: Math.abs(cf), type: "result", raw: cf })
+
+  const barColors = data.map((d) =>
+    d.type === "start"
+      ? "#22c55e"
+      : d.type === "expense"
+      ? "#f87171"
+      : d.raw >= 0
+      ? "#16a34a"
+      : "#ef4444"
+  )
 
   return (
-    <div className="space-y-2.5">
-      {steps.map((step, i) => {
-        let barLeft: number
-        let barWidth: number
-
-        if (step.type === "start") {
-          barLeft = 0
-          barWidth = 100
-        } else if (step.type === "expense") {
-          const before = running
-          running -= step.amount
-          barLeft = Math.max(0, (running / grossRent)) * 100
-          barWidth = (step.amount / grossRent) * 100
-        } else {
-          barLeft = 0
-          barWidth = Math.min(Math.abs(step.amount) / grossRent * 100, 100)
-        }
-
-        const barColor =
-          step.type === "start"
-            ? "#22c55e"
-            : step.type === "result"
-            ? step.amount >= 0
-              ? "#22c55e"
-              : "#ef4444"
-            : "#fca5a5"
-
-        const amtColor =
-          step.type === "expense"
-            ? "text-red-500"
-            : step.amount >= 0
-            ? "text-green-600"
-            : "text-red-500"
-
-        return (
-          <div key={i} className="flex items-center gap-3 text-sm">
-            <span className="w-36 text-right text-gray-500 text-xs shrink-0">{step.label}</span>
-            <div className="flex-1 relative h-5 bg-gray-100 rounded-sm overflow-hidden">
-              <div
-                className="absolute inset-y-0 rounded-sm"
-                style={{
-                  left: `${barLeft}%`,
-                  width: `${Math.max(barWidth, 0.4)}%`,
-                  backgroundColor: barColor,
-                }}
-              />
-            </div>
-            <span className={`w-20 text-xs font-medium text-right shrink-0 ${amtColor}`}>
-              {step.type === "expense" ? "−" : ""}
-              {fmt(Math.abs(step.amount))}
-            </span>
-          </div>
-        )
-      })}
-    </div>
+    <ResponsiveContainer width="100%" height={300}>
+      <BarChart data={data} margin={{ top: 16, right: 16, left: 8, bottom: 56 }} barCategoryGap="20%">
+        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f3f4f6" />
+        <XAxis
+          dataKey="name"
+          tick={{ fontSize: 10, fill: "#6b7280" }}
+          tickLine={false}
+          axisLine={false}
+          angle={-40}
+          textAnchor="end"
+          interval={0}
+        />
+        <YAxis
+          tickFormatter={(v: number) => `$${v >= 1000 ? (v / 1000).toFixed(0) + "k" : v}`}
+          tick={{ fontSize: 11, fill: "#9ca3af" }}
+          tickLine={false}
+          axisLine={false}
+        />
+        <Tooltip content={<WaterfallTooltip />} cursor={{ fill: "#f9fafb" }} />
+        {/* Transparent base creates the "floating" waterfall effect */}
+        <Bar dataKey="base" stackId="wf" fill="transparent" isAnimationActive={false} />
+        <Bar dataKey="value" stackId="wf" radius={[4, 4, 0, 0]} isAnimationActive={false}>
+          {data.map((_, i) => (
+            <Cell key={i} fill={barColors[i]} />
+          ))}
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
   )
 }
 
