@@ -6,6 +6,7 @@ import { analyzeDeal, fmt, fmtPct, type Deal } from "@/lib/calculations"
 type Scenario = Deal & { name: string }
 
 const MAX_SCENARIOS = 3
+const CLOSING_COST_PCT = 0.025
 
 function makeScenario(base: Deal, name: string): Scenario {
   return { ...base, name }
@@ -25,17 +26,32 @@ export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
     makeScenario(deal, "Current Deal"),
     makeScenario(deal, "Scenario 2"),
   ])
+  const [closingManual, setClosingManual] = useState<boolean[]>([false, false])
 
   function update(i: number, field: keyof Scenario, value: string | number) {
-    setScenarios(s => s.map((sc, idx) => idx === i ? { ...sc, [field]: value } : sc))
+    setScenarios(s => s.map((sc, idx) => {
+      if (idx !== i) return sc
+      const updated = { ...sc, [field]: value }
+      if (field === "purchasePrice" && !closingManual[i]) {
+        updated.closingCosts = Math.round((value as number) * CLOSING_COST_PCT)
+      }
+      return updated
+    }))
+  }
+
+  function updateClosing(i: number, value: number) {
+    setClosingManual(m => m.map((v, idx) => idx === i ? true : v))
+    setScenarios(s => s.map((sc, idx) => idx === i ? { ...sc, closingCosts: value } : sc))
   }
 
   function addScenario() {
     setScenarios(s => [...s, makeScenario(deal, `Scenario ${s.length + 1}`)])
+    setClosingManual(m => [...m, false])
   }
 
   function removeScenario(i: number) {
     setScenarios(s => s.filter((_, idx) => idx !== i))
+    setClosingManual(m => m.filter((_, idx) => idx !== i))
   }
 
   const results = scenarios.map(s => analyzeDeal(s))
@@ -145,9 +161,12 @@ export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
                   <div className="flex items-center gap-0.5">
                     <span className="text-xs text-gray-400 shrink-0">$</span>
                     <input type="number" min={0} step={500} value={sc.closingCosts}
-                      onChange={e => update(i, "closingCosts", parseFloat(e.target.value) || 0)}
+                      onChange={e => updateClosing(i, parseFloat(e.target.value) || 0)}
                       className={inputCls} />
                   </div>
+                  {!closingManual[i] && sc.purchasePrice > 0 && (
+                    <p className="text-[10px] text-blue-400 text-right mt-0.5">est. 2.5%</p>
+                  )}
                 </td>
               ))}
             </Row>
