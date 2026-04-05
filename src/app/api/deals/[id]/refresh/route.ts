@@ -13,20 +13,28 @@ const HOME_TYPE_MAP: Record<string, string> = {
   APARTMENT: "Apartment",
 }
 
-export async function POST(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function POST(_req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { id } = await params
+  const body = await _req.json().catch(() => ({}))
   const deal = await prisma.deal.findUnique({ where: { id } })
   if (!deal) return NextResponse.json({ error: "Not found" }, { status: 404 })
-  if (!deal.zillowUrl) return NextResponse.json({ error: "No Zillow URL on this deal" }, { status: 400 })
+
+  const zillowUrl = deal.zillowUrl ?? (typeof body.url === "string" ? body.url : null)
+  if (!zillowUrl) return NextResponse.json({ error: "No Zillow URL on this deal" }, { status: 400 })
+
+  // If a URL was provided and the deal didn't have one, save it now
+  if (!deal.zillowUrl && zillowUrl) {
+    await prisma.deal.update({ where: { id }, data: { zillowUrl } })
+  }
 
   const apiKey = process.env.RAPIDAPI_KEY
   if (!apiKey) return NextResponse.json({ error: "RAPIDAPI_KEY not configured" }, { status: 500 })
 
   const zillowRes = await fetch(
-    `https://private-zillow.p.rapidapi.com/pro/byurl?url=${encodeURIComponent(deal.zillowUrl)}`,
+    `https://private-zillow.p.rapidapi.com/pro/byurl?url=${encodeURIComponent(zillowUrl)}`,
     {
       headers: {
         "x-rapidapi-host": "private-zillow.p.rapidapi.com",

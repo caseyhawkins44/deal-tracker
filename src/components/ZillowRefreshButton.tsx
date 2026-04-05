@@ -3,9 +3,17 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 
-export default function ZillowRefreshButton({ dealId }: { dealId: string }) {
+export default function ZillowRefreshButton({
+  dealId,
+  zillowUrl,
+}: {
+  dealId: string
+  zillowUrl: string | null
+}) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [urlInput, setUrlInput] = useState("")
+  const [showUrlInput, setShowUrlInput] = useState(false)
   const [result, setResult] = useState<{
     updated: boolean
     changes: string[]
@@ -15,12 +23,17 @@ export default function ZillowRefreshButton({ dealId }: { dealId: string }) {
   } | null>(null)
   const [error, setError] = useState("")
 
-  async function refresh() {
+  async function refresh(urlOverride?: string) {
     setLoading(true)
     setResult(null)
     setError("")
 
-    const res = await fetch(`/api/deals/${dealId}/refresh`, { method: "POST" })
+    const body = urlOverride ? { url: urlOverride } : {}
+    const res = await fetch(`/api/deals/${dealId}/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    })
     const data = await res.json()
     setLoading(false)
 
@@ -29,14 +42,57 @@ export default function ZillowRefreshButton({ dealId }: { dealId: string }) {
       return
     }
 
+    setShowUrlInput(false)
     setResult(data)
     if (data.updated) router.refresh()
+  }
+
+  if (!zillowUrl && !showUrlInput) {
+    return (
+      <button
+        onClick={() => setShowUrlInput(true)}
+        className="text-xs text-blue-600 hover:underline"
+      >
+        Link Zillow listing →
+      </button>
+    )
+  }
+
+  if (!zillowUrl && showUrlInput) {
+    return (
+      <div className="flex flex-col items-end gap-1.5">
+        <div className="flex gap-2 items-center">
+          <input
+            type="url"
+            value={urlInput}
+            onChange={e => setUrlInput(e.target.value)}
+            placeholder="https://www.zillow.com/homedetails/..."
+            className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-72"
+            autoFocus
+          />
+          <button
+            onClick={() => refresh(urlInput)}
+            disabled={loading || !urlInput.includes("zillow.com")}
+            className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40 shrink-0"
+          >
+            {loading ? "Linking…" : "Link & Refresh"}
+          </button>
+          <button
+            onClick={() => setShowUrlInput(false)}
+            className="text-gray-400 hover:text-gray-600 text-sm"
+          >
+            ✕
+          </button>
+        </div>
+        {error && <p className="text-xs text-red-600">{error}</p>}
+      </div>
+    )
   }
 
   return (
     <div className="flex flex-col items-end gap-1">
       <button
-        onClick={refresh}
+        onClick={() => refresh()}
         disabled={loading}
         className="flex items-center gap-1.5 border border-gray-300 text-gray-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 disabled:opacity-40"
       >

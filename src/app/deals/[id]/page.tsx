@@ -83,7 +83,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
               </Link>
               <DeleteDealButton dealId={deal.id} />
             </div>
-            {deal.zillowUrl && <ZillowRefreshButton dealId={deal.id} />}
+            <ZillowRefreshButton dealId={deal.id} zillowUrl={deal.zillowUrl ?? null} />
           </div>
         </div>
 

@@ -81,6 +81,8 @@ export default function DealForm({
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
+  const [importing, setImporting] = useState(false)
+  const [importError, setImportError] = useState("")
   // Track if user has manually overridden closing costs
   const [closingCostsManual, setClosingCostsManual] = useState(
     () => !!(initialData?.closingCosts && initialData.closingCosts > 0)
@@ -106,6 +108,38 @@ export default function DealForm({
 
   function set(field: keyof DealData, value: string | number) {
     setForm(f => ({ ...f, [field]: value }))
+  }
+
+  async function importFromZillow() {
+    if (!form.zillowUrl.includes("zillow.com")) {
+      setImportError("Enter a valid Zillow URL first")
+      return
+    }
+    setImporting(true)
+    setImportError("")
+    const res = await fetch("/api/zillow", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ url: form.zillowUrl }),
+    })
+    const data = await res.json()
+    setImporting(false)
+    if (!res.ok) {
+      setImportError(data.error ?? "Import failed")
+      return
+    }
+    setForm(f => ({
+      ...f,
+      ...(data.address && { address: data.address }),
+      ...(data.city && { city: data.city }),
+      ...(data.state && { state: data.state }),
+      ...(data.zipCode && { zipCode: data.zipCode }),
+      ...(data.name && !nameManual && { name: data.name }),
+      ...(data.propertyType && { propertyType: data.propertyType }),
+      ...(data.purchasePrice && { purchasePrice: data.purchasePrice }),
+      ...(data.propertyTax && { propertyTax: data.propertyTax }),
+      ...(data.hoaFees && { hoaFees: data.hoaFees }),
+    }))
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -230,14 +264,28 @@ export default function DealForm({
             </select>
           </Field>
 
-          <Field label="Zillow URL">
-            <input
-              type="url"
-              placeholder="https://www.zillow.com/homedetails/..."
-              value={form.zillowUrl}
-              onChange={e => set("zillowUrl", e.target.value)}
-              className={inputCls}
-            />
+          <Field label="Zillow URL" className="md:col-span-2">
+            <div className="flex gap-2">
+              <input
+                type="url"
+                placeholder="https://www.zillow.com/homedetails/..."
+                value={form.zillowUrl}
+                onChange={e => set("zillowUrl", e.target.value)}
+                className={`${inputCls} flex-1`}
+              />
+              <button
+                type="button"
+                onClick={importFromZillow}
+                disabled={importing || !form.zillowUrl}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40 shrink-0"
+              >
+                {importing ? "Importing…" : "Import"}
+              </button>
+            </div>
+            {importError && <p className="text-xs text-red-600 mt-1">{importError}</p>}
+            {!importError && (
+              <p className="text-xs text-gray-400 mt-1">Paste a Zillow listing URL and click Import to auto-fill fields below.</p>
+            )}
           </Field>
         </div>
       </section>
