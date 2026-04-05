@@ -169,6 +169,11 @@ model ActivityLog {
   @@index([createdAt])
 }
 
+model AppSettings {
+  id         String  @id @default("singleton")
+  inviteCode String? // null = no invite code required
+}
+
 model InvestmentCriteria {
   id                 String @id @default("singleton")
   minCashOnCash      Float  @default(8)

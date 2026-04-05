@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma"
 import { redirect } from "next/navigation"
 import NavBar from "@/components/NavBar"
 import AdminUsersPanel from "@/components/AdminUsersPanel"
+import AdminInviteCode from "@/components/AdminInviteCode"
 
 export default async function AdminPage() {
   const session = await auth()
@@ -15,17 +16,20 @@ export default async function AdminPage() {
 
   if (me?.role !== "admin") redirect("/")
 
-  const rawUsers = await prisma.user.findMany({
-    select: {
-      id: true,
-      name: true,
-      email: true,
-      role: true,
-      createdAt: true,
-      _count: { select: { deals: true, comments: true } },
-    },
-    orderBy: { createdAt: "asc" },
-  })
+  const [rawUsers, appSettings] = await Promise.all([
+    prisma.user.findMany({
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        createdAt: true,
+        _count: { select: { deals: true, comments: true } },
+      },
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.appSettings.findUnique({ where: { id: "singleton" } }),
+  ])
 
   const users = rawUsers.map((u) => ({ ...u, createdAt: u.createdAt.toISOString() }))
 
@@ -37,7 +41,10 @@ export default async function AdminPage() {
           <h1 className="text-2xl font-bold">Admin Portal</h1>
           <p className="text-gray-500 text-sm">{users.length} user{users.length !== 1 ? "s" : ""} registered</p>
         </div>
-        <AdminUsersPanel users={users} currentUserId={session.user.id!} />
+        <AdminInviteCode currentCode={appSettings?.inviteCode ?? null} />
+        <div className="mt-8">
+          <AdminUsersPanel users={users} currentUserId={session.user.id!} />
+        </div>
       </main>
     </div>
   )
