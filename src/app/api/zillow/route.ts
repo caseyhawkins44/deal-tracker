@@ -7,8 +7,14 @@ export async function POST(req: NextRequest) {
   if (!session?.user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   const { url } = await req.json()
-  if (!url || !url.includes("zillow.com")) {
-    return NextResponse.json({ error: "Invalid Zillow URL" }, { status: 400 })
+  let parsedUrl: URL
+  try {
+    parsedUrl = new URL(url)
+  } catch {
+    return NextResponse.json({ error: "Invalid URL" }, { status: 400 })
+  }
+  if (!parsedUrl.hostname.endsWith("zillow.com")) {
+    return NextResponse.json({ error: "URL must be a zillow.com listing" }, { status: 400 })
   }
 
   const apiKey = process.env.RAPIDAPI_KEY

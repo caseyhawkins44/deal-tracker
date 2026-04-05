@@ -76,110 +76,113 @@ export default function CompareView({ deals }: { deals: Deal[] }) {
       </div>
 
       {/* Comparison Table */}
-      {selectedDeals.length >= 2 && (
-        <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200">
-                  <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 w-44">Metric</th>
-                  {selectedDeals.map(d => (
-                    <th key={d.id} className="text-left px-5 py-3">
-                      <Link href={`/deals/${d.id}`} className="font-semibold text-gray-900 hover:text-blue-600">
-                        {d.name}
-                      </Link>
-                      <p className="text-xs text-gray-400 font-normal">{d.city}, {d.state}</p>
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                <SectionRow label="Overview" cols={selectedDeals.length} />
-                <CompareRow
-                  label="Purchase Price"
-                  values={selectedDeals.map(d => fmt(d.purchasePrice))}
-                  rawValues={selectedDeals.map(d => d.purchasePrice)}
-                  higherIsBetter={false}
-                />
-                <CompareRow
-                  label="Total Invested"
-                  values={selectedDeals.map(d => fmt(analyzeDeal(d).totalInvested))}
-                  rawValues={selectedDeals.map(d => analyzeDeal(d).totalInvested)}
-                  higherIsBetter={false}
-                />
-                <CompareRow
-                  label="Monthly Rent"
-                  values={selectedDeals.map(d => fmt(d.monthlyRent))}
-                  rawValues={selectedDeals.map(d => d.monthlyRent)}
-                  higherIsBetter={true}
-                />
+      {selectedDeals.length >= 2 && (() => {
+        const metrics = selectedDeals.map(d => analyzeDeal(d))
+        return (
+          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-gray-200">
+                    <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 w-44">Metric</th>
+                    {selectedDeals.map(d => (
+                      <th key={d.id} className="text-left px-5 py-3">
+                        <Link href={`/deals/${d.id}`} className="font-semibold text-gray-900 hover:text-blue-600">
+                          {d.name}
+                        </Link>
+                        <p className="text-xs text-gray-400 font-normal">{d.city}, {d.state}</p>
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <SectionRow label="Overview" cols={selectedDeals.length} />
+                  <CompareRow
+                    label="Purchase Price"
+                    values={selectedDeals.map(d => fmt(d.purchasePrice))}
+                    rawValues={selectedDeals.map(d => d.purchasePrice)}
+                    higherIsBetter={false}
+                  />
+                  <CompareRow
+                    label="Total Invested"
+                    values={metrics.map(m => fmt(m.totalInvested))}
+                    rawValues={metrics.map(m => m.totalInvested)}
+                    higherIsBetter={false}
+                  />
+                  <CompareRow
+                    label="Monthly Rent"
+                    values={selectedDeals.map(d => fmt(d.monthlyRent))}
+                    rawValues={selectedDeals.map(d => d.monthlyRent)}
+                    higherIsBetter={true}
+                  />
 
-                <SectionRow label="Returns" cols={selectedDeals.length} />
-                <CompareRow
-                  label="Monthly Cash Flow"
-                  values={selectedDeals.map(d => fmt(analyzeDeal(d).monthlyCashFlow))}
-                  rawValues={selectedDeals.map(d => analyzeDeal(d).monthlyCashFlow)}
-                  higherIsBetter={true}
-                  colorize
-                />
-                <CompareRow
-                  label="Annual Cash Flow"
-                  values={selectedDeals.map(d => fmt(analyzeDeal(d).annualCashFlow))}
-                  rawValues={selectedDeals.map(d => analyzeDeal(d).annualCashFlow)}
-                  higherIsBetter={true}
-                  colorize
-                />
-                <CompareRow
-                  label="Cap Rate"
-                  values={selectedDeals.map(d => fmtPct(analyzeDeal(d).capRate))}
-                  rawValues={selectedDeals.map(d => analyzeDeal(d).capRate)}
-                  higherIsBetter={true}
-                  colorize
-                />
-                <CompareRow
-                  label="Cash-on-Cash Return"
-                  values={selectedDeals.map(d => fmtPct(analyzeDeal(d).cashOnCash))}
-                  rawValues={selectedDeals.map(d => analyzeDeal(d).cashOnCash)}
-                  higherIsBetter={true}
-                  colorize
-                />
-                <CompareRow
-                  label="Gross Yield"
-                  values={selectedDeals.map(d => fmtPct(analyzeDeal(d).grossYield))}
-                  rawValues={selectedDeals.map(d => analyzeDeal(d).grossYield)}
-                  higherIsBetter={true}
-                />
-                <CompareRow
-                  label="GRM"
-                  values={selectedDeals.map(d => `${analyzeDeal(d).grm.toFixed(1)}x`)}
-                  rawValues={selectedDeals.map(d => analyzeDeal(d).grm)}
-                  higherIsBetter={false}
-                />
+                  <SectionRow label="Returns" cols={selectedDeals.length} />
+                  <CompareRow
+                    label="Monthly Cash Flow"
+                    values={metrics.map(m => fmt(m.monthlyCashFlow))}
+                    rawValues={metrics.map(m => m.monthlyCashFlow)}
+                    higherIsBetter={true}
+                    colorize
+                  />
+                  <CompareRow
+                    label="Annual Cash Flow"
+                    values={metrics.map(m => fmt(m.annualCashFlow))}
+                    rawValues={metrics.map(m => m.annualCashFlow)}
+                    higherIsBetter={true}
+                    colorize
+                  />
+                  <CompareRow
+                    label="Cap Rate"
+                    values={metrics.map(m => fmtPct(m.capRate))}
+                    rawValues={metrics.map(m => m.capRate)}
+                    higherIsBetter={true}
+                    colorize
+                  />
+                  <CompareRow
+                    label="Cash-on-Cash Return"
+                    values={metrics.map(m => fmtPct(m.cashOnCash))}
+                    rawValues={metrics.map(m => m.cashOnCash)}
+                    higherIsBetter={true}
+                    colorize
+                  />
+                  <CompareRow
+                    label="Gross Yield"
+                    values={metrics.map(m => fmtPct(m.grossYield))}
+                    rawValues={metrics.map(m => m.grossYield)}
+                    higherIsBetter={true}
+                  />
+                  <CompareRow
+                    label="GRM"
+                    values={metrics.map(m => `${m.grm.toFixed(1)}x`)}
+                    rawValues={metrics.map(m => m.grm)}
+                    higherIsBetter={false}
+                  />
 
-                <SectionRow label="Financing" cols={selectedDeals.length} />
-                <CompareRow
-                  label="Down Payment %"
-                  values={selectedDeals.map(d => `${d.downPaymentPct}%`)}
-                  rawValues={selectedDeals.map(d => d.downPaymentPct)}
-                  higherIsBetter={false}
-                />
-                <CompareRow
-                  label="Interest Rate"
-                  values={selectedDeals.map(d => `${d.interestRate}%`)}
-                  rawValues={selectedDeals.map(d => d.interestRate)}
-                  higherIsBetter={false}
-                />
-                <CompareRow
-                  label="Monthly Mortgage"
-                  values={selectedDeals.map(d => fmt(analyzeDeal(d).monthlyMortgage))}
-                  rawValues={selectedDeals.map(d => analyzeDeal(d).monthlyMortgage)}
-                  higherIsBetter={false}
-                />
-              </tbody>
-            </table>
+                  <SectionRow label="Financing" cols={selectedDeals.length} />
+                  <CompareRow
+                    label="Down Payment %"
+                    values={selectedDeals.map(d => `${d.downPaymentPct}%`)}
+                    rawValues={selectedDeals.map(d => d.downPaymentPct)}
+                    higherIsBetter={false}
+                  />
+                  <CompareRow
+                    label="Interest Rate"
+                    values={selectedDeals.map(d => `${d.interestRate}%`)}
+                    rawValues={selectedDeals.map(d => d.interestRate)}
+                    higherIsBetter={false}
+                  />
+                  <CompareRow
+                    label="Monthly Mortgage"
+                    values={metrics.map(m => fmt(m.monthlyMortgage))}
+                    rawValues={metrics.map(m => m.monthlyMortgage)}
+                    higherIsBetter={false}
+                  />
+                </tbody>
+              </table>
+            </div>
           </div>
-        </div>
-      )}
+        )
+      })()}
 
       {selectedDeals.length === 1 && (
         <p className="text-sm text-gray-500 text-center py-6">Select at least one more deal to compare</p>

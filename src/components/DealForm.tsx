@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import CurrencyInput from "@/components/CurrencyInput"
 import AddressSearch from "@/components/AddressSearch"
+import { DEAL_STATUSES, PROPERTY_TYPES, CLOSING_COST_PCT } from "@/lib/constants"
 
 type DealData = {
   name: string
@@ -57,11 +58,6 @@ const DEFAULTS: DealData = {
   managementFee: 0,
   notes: "",
 }
-
-const PROPERTY_TYPES = ["Single Family", "Multi Family", "Condo", "Townhouse", "Commercial", "Land"]
-const STATUSES = ["Prospecting", "Under Analysis", "Offer Made", "Passed"]
-// Closing costs estimated at 2.5% of purchase price (standard buyer closing costs)
-const CLOSING_COST_PCT = 0.025
 
 export default function DealForm({
   initialData,
@@ -261,7 +257,7 @@ export default function DealForm({
               onChange={e => set("status", e.target.value)}
               className={inputCls}
             >
-              {STATUSES.map(s => <option key={s}>{s}</option>)}
+              {DEAL_STATUSES.map(s => <option key={s}>{s}</option>)}
             </select>
           </Field>
 

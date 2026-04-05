@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import { analyzeDeal, fmt, fmtPct, type Deal } from "@/lib/calculations"
+import { CLOSING_COST_PCT } from "@/lib/constants"
 
 type Scenario = Deal & { name: string }
 
 const MAX_SCENARIOS = 3
-const CLOSING_COST_PCT = 0.025
 
 function makeScenario(base: Deal, name: string): Scenario {
   return { ...base, name }

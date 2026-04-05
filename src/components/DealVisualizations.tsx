@@ -74,10 +74,12 @@ type WaterfallEntry = {
   raw: number // signed amount for tooltip
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function WaterfallTooltip({ active, payload }: any) {
+function WaterfallTooltip({ active, payload }: {
+  active?: boolean
+  payload?: Array<{ payload: WaterfallEntry }>
+}) {
   if (!active || !payload?.length) return null
-  const entry: WaterfallEntry = payload[0]?.payload
+  const entry = payload[0]?.payload
   if (!entry) return null
   const isExpense = entry.type === "expense"
   return (

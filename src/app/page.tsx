@@ -5,8 +5,7 @@ import Link from "next/link"
 import NavBar from "@/components/NavBar"
 import { analyzeDeal, fmt, fmtPct } from "@/lib/calculations"
 import { timeAgo } from "@/lib/timeAgo"
-
-const STATUSES = ["Prospecting", "Under Analysis", "Offer Made", "Passed"]
+import { DEAL_STATUSES } from "@/lib/constants"
 
 const STATUS_COLORS: Record<string, string> = {
   Prospecting: "bg-blue-50 text-blue-700 border-blue-200",
@@ -64,7 +63,7 @@ export default async function DashboardPage() {
     avgCashOnCash = totals.cashOnCash / activeDeals.length
   }
 
-  const statusCounts = STATUSES.reduce<Record<string, number>>((acc, s) => {
+  const statusCounts = DEAL_STATUSES.reduce<Record<string, number>>((acc, s) => {
     acc[s] = deals.filter((d) => d.status === s).length
     return acc
   }, {})
@@ -98,7 +97,7 @@ export default async function DashboardPage() {
         <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
           <h2 className="font-semibold mb-4">Pipeline by Status</h2>
           <div className="flex flex-wrap gap-3">
-            {STATUSES.map((s) => (
+            {DEAL_STATUSES.map((s) => (
               <Link
                 key={s}
                 href="/deals"

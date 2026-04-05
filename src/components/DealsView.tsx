@@ -153,7 +153,7 @@ export default function DealsView({
                     label="Gross Yield"
                     value={fmtPct(m.grossYield)}
                     positive={m.grossYield >= 8}
-                    dot={metricDot(m.grossYield, criteria.minCapRate)}
+                    dot={metricDot(m.grossYield, 8)}
                   />
                 </div>
               </Link>
