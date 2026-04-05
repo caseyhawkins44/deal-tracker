@@ -11,6 +11,7 @@ import { analyzeDeal, fmt, fmtPct } from "@/lib/calculations"
 import { DEFAULT_CRITERIA, metricDot, type InvestmentCriteriaType } from "@/lib/criteria"
 import DeleteDealButton from "@/components/DeleteDealButton"
 import ZillowRefreshButton from "@/components/ZillowRefreshButton"
+import ScenarioAnalyzer from "@/components/ScenarioAnalyzer"
 
 const TOOLTIPS = {
   cashFlow:
@@ -86,9 +87,6 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             <ZillowRefreshButton dealId={deal.id} zillowUrl={deal.zillowUrl ?? null} />
           </div>
         </div>
-
-        {/* Voting */}
-        <DealVoting dealId={deal.id} currentUserId={session.user.id!} />
 
         {/* Key Metrics */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
@@ -226,6 +224,12 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
 
         {/* Activity Timeline */}
         <DealActivity dealId={deal.id} />
+
+        {/* Voting */}
+        <DealVoting dealId={deal.id} currentUserId={session.user.id!} />
+
+        {/* Scenario Analysis */}
+        <ScenarioAnalyzer deal={deal} />
       </main>
     </div>
   )
