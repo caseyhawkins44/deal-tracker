@@ -84,6 +84,24 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
   }
 }
 
+export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  const session = await auth()
+  if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
+
+  try {
+    const { id } = await params
+    const { projectId } = await req.json()
+    const deal = await prisma.deal.update({
+      where: { id },
+      data: { projectId: projectId ?? null },
+    })
+    return NextResponse.json(deal)
+  } catch (e) {
+    console.error("PATCH /api/deals/[id]", e)
+    return NextResponse.json({ error: "Failed to update deal" }, { status: 500 })
+  }
+}
+
 export async function DELETE(_: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const session = await auth()
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
