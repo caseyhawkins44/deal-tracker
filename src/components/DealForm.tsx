@@ -357,14 +357,14 @@ export default function DealForm({
 
           <Field
             label={
-              <span className="flex items-center gap-1">
+              <>
                 Closing Costs
                 {!closingCostsManual && form.purchasePrice > 0 && (
                   <span className="text-[10px] text-blue-500 bg-blue-50 border border-blue-200 px-1.5 rounded-full font-normal">
                     estimated 2.5%
                   </span>
                 )}
-              </span>
+              </>
             }
           >
             <CurrencyInput
@@ -437,10 +437,10 @@ export default function DealForm({
           </Field>
 
           <Field label={
-            <span className="flex items-center gap-1">
+            <>
               Mgmt Fee (%)
               <InfoTooltip content="Default 8% — the typical rate charged by residential property managers for single-family homes (range: 8–12%). Set to 0 if self-managing." />
-            </span>
+            </>
           }>
             <input
               type="number"
@@ -462,13 +462,13 @@ export default function DealForm({
           </Field>
 
           <Field label={
-            <span className="flex items-center gap-1">
+            <>
               Insurance ($/mo)
               {!insuranceManual && form.purchasePrice > 0 && (
                 <span className="text-[10px] text-blue-500 bg-blue-50 border border-blue-200 px-1.5 rounded-full font-normal">est. 0.5%/yr</span>
               )}
               <InfoTooltip content="Estimated at 0.5% of purchase price per year ÷ 12. Landlord insurance (dwelling policy) typically runs 0.4–0.8% of home value annually depending on location, age, and coverage." />
-            </span>
+            </>
           }>
             <CurrencyInput
               value={form.insurance}
@@ -478,13 +478,13 @@ export default function DealForm({
           </Field>
 
           <Field label={
-            <span className="flex items-center gap-1">
+            <>
               Maintenance ($/mo)
               {!maintenanceManual && form.purchasePrice > 0 && (
                 <span className="text-[10px] text-blue-500 bg-blue-50 border border-blue-200 px-1.5 rounded-full font-normal">est. 1%/yr</span>
               )}
               <InfoTooltip content="Estimated at 1% of purchase price per year ÷ 12 — the standard rule of thumb for ongoing repairs and upkeep. Older homes or those needing work may run higher (1.5–2%)." />
-            </span>
+            </>
           }>
             <CurrencyInput
               value={form.maintenance}
@@ -494,10 +494,10 @@ export default function DealForm({
           </Field>
 
           <Field label={
-            <span className="flex items-center gap-1">
+            <>
               Utilities ($/mo)
               <InfoTooltip content="Default $0 — utilities are typically paid by the tenant in single-family rentals. Enter a monthly amount if you cover water, trash, or other utilities as the landlord." />
-            </span>
+            </>
           }>
             <CurrencyInput
               value={form.utilities}
