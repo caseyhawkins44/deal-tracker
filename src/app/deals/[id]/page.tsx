@@ -223,6 +223,9 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
           </div>
         )}
 
+        {/* Scenario Analysis */}
+        <ScenarioAnalyzer deal={deal} />
+
         {/* Comments */}
         <DealComments dealId={deal.id} currentUserId={session.user.id!} />
 
@@ -231,9 +234,6 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
 
         {/* Voting */}
         <DealVoting dealId={deal.id} currentUserId={session.user.id!} />
-
-        {/* Scenario Analysis */}
-        <ScenarioAnalyzer deal={deal} />
       </main>
     </div>
   )
