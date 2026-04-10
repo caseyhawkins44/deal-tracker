@@ -52,9 +52,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center px-4">
-      <div className="bg-white/90 rounded-[22px] shadow-xl border border-black/[0.07] w-full max-w-md p-8" style={{backdropFilter:"blur(20px)"}}>
-        <h1 className="text-2xl font-bold text-gray-900 mb-1">Deal Tracker</h1>
-        <p className="text-gray-500 text-sm mb-6">Real estate portfolio analysis</p>
+      <div className="bg-white rounded-[22px] shadow-2xl border border-black/[0.07] w-full max-w-md p-10">
+        <h1 className="text-3xl font-bold tracking-tight text-gray-900 mb-1">Deal Tracker</h1>
+        <p className="text-gray-500 mb-8">Real estate portfolio analysis</p>
 
         <div className="flex border-b border-gray-200 mb-6">
           <button

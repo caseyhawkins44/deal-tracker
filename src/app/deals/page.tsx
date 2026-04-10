@@ -51,11 +51,11 @@ export default async function DealsPage() {
   return (
     <div className="min-h-screen">
       <NavBar user={session.user} />
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        <div className="flex items-center justify-between mb-8">
           <div>
-            <h1 className="text-2xl font-bold">Prospective Deals</h1>
-            <p className="text-gray-500 text-sm">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900">Prospective Deals</h1>
+            <p className="text-gray-500 mt-1">
               {deals.length} deal{deals.length !== 1 ? "s" : ""} tracked
             </p>
           </div>

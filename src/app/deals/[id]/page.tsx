@@ -52,16 +52,16 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="min-h-screen">
       <NavBar user={session.user} />
-      <main className="max-w-5xl mx-auto px-4 py-8">
+      <main className="max-w-5xl mx-auto px-6 py-10">
         {/* Header */}
-        <div className="flex items-start justify-between mb-6">
+        <div className="flex items-start justify-between mb-10">
           <div>
-            <div className="mb-1">
-              <Link href="/deals" className="text-sm text-gray-500 hover:text-gray-700">← Deals</Link>
+            <div className="mb-3">
+              <Link href="/deals" className="text-sm text-gray-400 hover:text-gray-700 transition-colors">← Deals</Link>
             </div>
-            <h1 className="text-2xl font-bold">{deal.name}</h1>
-            <p className="text-gray-500 text-sm">{deal.address}, {deal.city}, {deal.state} {deal.zipCode} · {deal.propertyType}</p>
-            <div className="flex items-center gap-3 mt-1">
+            <h1 className="text-4xl font-bold tracking-tight text-gray-900 mb-1.5">{deal.name}</h1>
+            <p className="text-gray-500 text-base">{deal.address}, {deal.city}, {deal.state} {deal.zipCode} · {deal.propertyType}</p>
+            <div className="flex items-center gap-3 mt-2">
               <p className="text-xs text-gray-400">Added by {deal.addedBy.name}</p>
               {deal.zillowUrl && (
                 <a
@@ -90,7 +90,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
         </div>
 
         {/* Key Metrics */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
           <BigMetric
             label="Monthly Cash Flow"
             tooltip={TOOLTIPS.cashFlow}
@@ -125,7 +125,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
           />
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <div className="grid md:grid-cols-2 gap-5">
           {/* Purchase Summary */}
           <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
             <h2 className="font-semibold mb-4">Purchase & Financing</h2>
@@ -250,14 +250,14 @@ function BigMetric({
   dot: "green" | "amber" | "red"
 }) {
   return (
-    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-5">
-      <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
+      <p className="text-xs font-medium text-gray-400 uppercase tracking-wide mb-3 flex items-center gap-1">
         {label}
         <InfoTooltip content={tooltip} />
-        <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLORS[dot]}`} />
+        <span className={`w-2 h-2 rounded-full shrink-0 ml-0.5 ${DOT_COLORS[dot]}`} />
       </p>
-      <p className={`text-xl font-bold ${positive ? "text-green-600" : "text-red-500"}`}>{value}</p>
-      <p className="text-xs text-gray-400 mt-0.5">{sub}</p>
+      <p className={`text-4xl font-bold tracking-tight ${positive ? "text-green-600" : "text-red-500"}`}>{value}</p>
+      <p className="text-xs text-gray-400 mt-2">{sub}</p>
     </div>
   )
 }

@@ -71,14 +71,14 @@ export default async function DashboardPage() {
   return (
     <div className="min-h-screen">
       <NavBar user={session.user} />
-      <main className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-gray-500 text-sm">Welcome back, {session.user.name ?? session.user.email}</p>
+      <main className="max-w-7xl mx-auto px-6 py-10">
+        <div className="mb-10">
+          <h1 className="text-4xl font-bold tracking-tight text-gray-900">Dashboard</h1>
+          <p className="text-gray-500 mt-1">Welcome back, {session.user.name ?? session.user.email}</p>
         </div>
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mb-8">
           <SummaryCard label="Total Deals" value={String(deals.length)} sub="in pipeline" />
           <SummaryCard label="Active Deals" value={String(activeDeals.length)} sub="not passed" />
           <SummaryCard
@@ -181,10 +181,10 @@ export default async function DashboardPage() {
 
 function SummaryCard({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
-    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-5">
-      <p className="text-xs text-gray-500 mb-1">{label}</p>
-      <p className="text-2xl font-bold text-gray-900">{value}</p>
-      <p className="text-xs text-gray-400 mt-0.5">{sub}</p>
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
+      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-3">{label}</p>
+      <p className="text-4xl font-bold tracking-tight text-gray-900">{value}</p>
+      <p className="text-xs text-gray-400 mt-2">{sub}</p>
     </div>
   )
 }

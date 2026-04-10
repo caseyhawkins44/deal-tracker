@@ -59,9 +59,9 @@ function Metric({
 }) {
   return (
     <div>
-      <p className="text-xs text-gray-500 mb-0.5">{label}</p>
-      <div className="flex items-center gap-1">
-        <p className={`text-sm font-semibold ${positive ? "text-green-600" : "text-red-500"}`}>{value}</p>
+      <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-1">{label}</p>
+      <div className="flex items-center gap-1.5">
+        <p className={`text-lg font-bold ${positive ? "text-green-600" : "text-red-500"}`}>{value}</p>
         <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${DOT_COLORS[dot]}`} />
       </div>
     </div>
@@ -109,14 +109,14 @@ export default function DealsView({
               <Link
                 key={deal.id}
                 href={`/deals/${deal.id}`}
-                className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-5 hover:border-[#0071e3]/40 hover:shadow-sm transition-all"
+                className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 hover:border-[#0071e3]/30 hover:shadow-md transition-all"
               >
-                <div className="flex items-start justify-between">
+                <div className="flex items-start justify-between mb-5">
                   <div>
-                    <div className="flex items-center gap-2 mb-0.5">
-                      <h2 className="font-semibold text-gray-900">{deal.name}</h2>
+                    <div className="flex items-center gap-2.5 mb-1">
+                      <h2 className="text-lg font-bold text-gray-900">{deal.name}</h2>
                       <span
-                        className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                        className={`text-xs px-2.5 py-0.5 rounded-full font-medium ${
                           STATUS_COLORS[deal.status] ?? "bg-gray-100 text-gray-600"
                         }`}
                       >
@@ -126,11 +126,14 @@ export default function DealsView({
                     <p className="text-sm text-gray-500">
                       {deal.address}, {deal.city}, {deal.state} · {deal.propertyType}
                     </p>
-                    <p className="text-xs text-gray-400 mt-0.5">Added by {deal.addedByName}</p>
+                    <p className="text-xs text-gray-400 mt-1">Added by {deal.addedByName}</p>
                   </div>
-                  <p className="text-lg font-bold text-gray-900">{fmt(deal.purchasePrice)}</p>
+                  <div className="text-right">
+                    <p className="text-[11px] font-medium text-gray-400 uppercase tracking-wide mb-1">Price</p>
+                    <p className="text-2xl font-bold text-gray-900">{fmt(deal.purchasePrice)}</p>
+                  </div>
                 </div>
-                <div className="grid grid-cols-4 gap-3 mt-4 pt-4 border-t border-gray-100">
+                <div className="grid grid-cols-4 gap-4 pt-5 border-t border-black/[0.05]">
                   <Metric
                     label="Cash Flow/mo"
                     value={fmt(m.monthlyCashFlow)}
