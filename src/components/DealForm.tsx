@@ -15,7 +15,7 @@ type DealData = {
   propertyType: string
   status: string
   zillowUrl: string
-  projectId: string
+  projectId: string | null
   purchasePrice: number
   downPaymentPct: number
   closingCosts: number
@@ -43,7 +43,7 @@ const DEFAULTS: DealData = {
   propertyType: "Single Family",
   status: "Prospecting",
   zillowUrl: "",
-  projectId: "",
+  projectId: null,
   purchasePrice: 0,
   downPaymentPct: 20,
   closingCosts: 0,
@@ -75,7 +75,7 @@ export default function DealForm({
     ...initialData,
     zillowUrl: initialData?.zillowUrl ?? "",
     notes: initialData?.notes ?? "",
-    projectId: initialData?.projectId ?? "",
+    projectId: initialData?.projectId ?? null,
   }))
 
   const [projects, setProjects] = useState<{ id: string; name: string }[]>([])
@@ -271,7 +271,7 @@ export default function DealForm({
 
           <Field label="Project">
             <select
-              value={form.projectId}
+              value={form.projectId ?? ""}
               onChange={e => set("projectId", e.target.value)}
               className={inputCls}
             >
