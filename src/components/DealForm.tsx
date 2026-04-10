@@ -4,7 +4,11 @@ import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import CurrencyInput from "@/components/CurrencyInput"
 import AddressSearch from "@/components/AddressSearch"
+import InfoTooltip from "@/components/InfoTooltip"
 import { DEAL_STATUSES, PROPERTY_TYPES, CLOSING_COST_PCT } from "@/lib/constants"
+
+const INSURANCE_PCT = 0.005   // 0.5% of purchase price annually
+const MAINTENANCE_PCT = 0.01  // 1.0% of purchase price annually
 
 type DealData = {
   name: string
@@ -57,7 +61,7 @@ const DEFAULTS: DealData = {
   interestRate: 7,
   loanTermYears: 30,
   vacancyRate: 5,
-  managementFee: 0,
+  managementFee: 8,
   notes: "",
 }
 
@@ -83,9 +87,15 @@ export default function DealForm({
   const [error, setError] = useState("")
   const [importing, setImporting] = useState(false)
   const [importError, setImportError] = useState("")
-  // Track if user has manually overridden closing costs
+  // Track if user has manually overridden auto-calculated fields
   const [closingCostsManual, setClosingCostsManual] = useState(
     () => !!(initialData?.closingCosts && initialData.closingCosts > 0)
+  )
+  const [insuranceManual, setInsuranceManual] = useState(
+    () => !!(initialData?.insurance && initialData.insurance > 0)
+  )
+  const [maintenanceManual, setMaintenanceManual] = useState(
+    () => !!(initialData?.maintenance && initialData.maintenance > 0)
   )
   // Track if user has manually set the deal name
   const [nameManual, setNameManual] = useState(
@@ -102,6 +112,20 @@ export default function DealForm({
       setForm(f => ({ ...f, closingCosts: Math.round(form.purchasePrice * CLOSING_COST_PCT) }))
     }
   }, [form.purchasePrice, closingCostsManual])
+
+  // Auto-set insurance (0.5% of price/yr ÷ 12) unless manually edited
+  useEffect(() => {
+    if (!insuranceManual && form.purchasePrice > 0) {
+      setForm(f => ({ ...f, insurance: Math.round((form.purchasePrice * INSURANCE_PCT) / 12) }))
+    }
+  }, [form.purchasePrice, insuranceManual])
+
+  // Auto-set maintenance (1% of price/yr ÷ 12) unless manually edited
+  useEffect(() => {
+    if (!maintenanceManual && form.purchasePrice > 0) {
+      setForm(f => ({ ...f, maintenance: Math.round((form.purchasePrice * MAINTENANCE_PCT) / 12) }))
+    }
+  }, [form.purchasePrice, maintenanceManual])
 
   // Auto-set deal name from address (unless manually edited)
   useEffect(() => {
@@ -412,7 +436,12 @@ export default function DealForm({
             />
           </Field>
 
-          <Field label="Mgmt Fee (%)">
+          <Field label={
+            <span className="flex items-center gap-1">
+              Mgmt Fee (%)
+              <InfoTooltip content="Default 8% — the typical rate charged by residential property managers for single-family homes (range: 8–12%). Set to 0 if self-managing." />
+            </span>
+          }>
             <input
               type="number"
               min={0}
@@ -432,23 +461,44 @@ export default function DealForm({
             />
           </Field>
 
-          <Field label="Insurance ($/mo)">
+          <Field label={
+            <span className="flex items-center gap-1">
+              Insurance ($/mo)
+              {!insuranceManual && form.purchasePrice > 0 && (
+                <span className="text-[10px] text-blue-500 bg-blue-50 border border-blue-200 px-1.5 rounded-full font-normal">est. 0.5%/yr</span>
+              )}
+              <InfoTooltip content="Estimated at 0.5% of purchase price per year ÷ 12. Landlord insurance (dwelling policy) typically runs 0.4–0.8% of home value annually depending on location, age, and coverage." />
+            </span>
+          }>
             <CurrencyInput
               value={form.insurance}
-              onChange={v => set("insurance", v)}
+              onChange={v => { setInsuranceManual(true); set("insurance", v) }}
               className={inputCls}
             />
           </Field>
 
-          <Field label="Maintenance ($/mo)">
+          <Field label={
+            <span className="flex items-center gap-1">
+              Maintenance ($/mo)
+              {!maintenanceManual && form.purchasePrice > 0 && (
+                <span className="text-[10px] text-blue-500 bg-blue-50 border border-blue-200 px-1.5 rounded-full font-normal">est. 1%/yr</span>
+              )}
+              <InfoTooltip content="Estimated at 1% of purchase price per year ÷ 12 — the standard rule of thumb for ongoing repairs and upkeep. Older homes or those needing work may run higher (1.5–2%)." />
+            </span>
+          }>
             <CurrencyInput
               value={form.maintenance}
-              onChange={v => set("maintenance", v)}
+              onChange={v => { setMaintenanceManual(true); set("maintenance", v) }}
               className={inputCls}
             />
           </Field>
 
-          <Field label="Utilities ($/mo)">
+          <Field label={
+            <span className="flex items-center gap-1">
+              Utilities ($/mo)
+              <InfoTooltip content="Default $0 — utilities are typically paid by the tenant in single-family rentals. Enter a monthly amount if you cover water, trash, or other utilities as the landlord." />
+            </span>
+          }>
             <CurrencyInput
               value={form.utilities}
               onChange={v => set("utilities", v)}
