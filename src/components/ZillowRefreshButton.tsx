@@ -51,7 +51,7 @@ export default function ZillowRefreshButton({
     return (
       <button
         onClick={() => setShowUrlInput(true)}
-        className="text-xs text-blue-600 hover:underline"
+        className="text-xs text-[#0071e3] hover:underline"
       >
         Link Zillow listing →
       </button>
@@ -67,13 +67,13 @@ export default function ZillowRefreshButton({
             value={urlInput}
             onChange={e => setUrlInput(e.target.value)}
             placeholder="https://www.zillow.com/homedetails/..."
-            className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-72"
+            className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/40 w-72"
             autoFocus
           />
           <button
             onClick={() => refresh(urlInput)}
             disabled={loading || !urlInput.includes("zillow.com")}
-            className="bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40 shrink-0"
+            className="bg-[#0071e3] text-white px-3 py-1.5 rounded-lg text-sm font-medium hover:bg-[#0065d1] disabled:opacity-40 shrink-0"
           >
             {loading ? "Linking…" : "Link & Refresh"}
           </button>

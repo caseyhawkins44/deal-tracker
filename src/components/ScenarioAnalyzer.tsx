@@ -12,7 +12,7 @@ function makeScenario(base: Deal, name: string): Scenario {
   return { ...base, name }
 }
 
-const inputCls = "w-full border border-gray-200 rounded px-2 py-1 text-sm text-right focus:outline-none focus:ring-1 focus:ring-blue-400 bg-white"
+const inputCls = "w-full border border-black/[0.10] rounded-lg px-2 py-1 text-sm text-right focus:outline-none focus:ring-1 focus:ring-[#0071e3]/40 bg-black/[0.02]"
 
 function cashColor(v: number) {
   return v >= 200 ? "text-green-600" : v >= 0 ? "text-amber-600" : "text-red-500"
@@ -58,13 +58,13 @@ export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
   const n = scenarios.length
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mt-6">
       <div className="flex items-center justify-between mb-1">
         <h2 className="font-semibold text-gray-900">Scenario Analysis</h2>
         {n < MAX_SCENARIOS && (
           <button
             onClick={addScenario}
-            className="text-xs text-blue-600 hover:text-blue-700 font-medium border border-blue-200 px-2.5 py-1 rounded-lg hover:bg-blue-50"
+            className="text-xs text-[#0071e3] hover:text-[#0071e3] font-medium border border-[#0071e3]/25 px-2.5 py-1 rounded-lg hover:bg-[#e8f1fb]"
           >
             + Add Scenario
           </button>
@@ -88,7 +88,7 @@ export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
                     <input
                       value={sc.name}
                       onChange={e => update(i, "name", e.target.value)}
-                      className="font-semibold text-sm text-gray-800 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-blue-400 focus:outline-none w-full min-w-0"
+                      className="font-semibold text-sm text-gray-800 bg-transparent border-b border-transparent hover:border-gray-300 focus:border-[#0071e3]/50 focus:outline-none w-full min-w-0"
                     />
                     {n > 2 && (
                       <button onClick={() => removeScenario(i)} className="text-gray-300 hover:text-red-400 shrink-0 text-xs">✕</button>
@@ -165,7 +165,7 @@ export default function ScenarioAnalyzer({ deal }: { deal: Deal }) {
                       className={inputCls} />
                   </div>
                   {!closingManual[i] && sc.purchasePrice > 0 && (
-                    <p className="text-[10px] text-blue-400 text-right mt-0.5">est. 2.5%</p>
+                    <p className="text-[10px] text-[#0071e3]/70 text-right mt-0.5">est. 2.5%</p>
                   )}
                 </td>
               ))}

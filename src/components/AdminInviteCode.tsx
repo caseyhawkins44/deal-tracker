@@ -33,7 +33,7 @@ export default function AdminInviteCode({ currentCode }: { currentCode: string |
   const displayCode = currentCode ?? null
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6">
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
       <div className="flex items-start justify-between mb-1">
         <h2 className="font-semibold text-gray-900">Invite Code</h2>
         <span className={`text-xs px-2.5 py-1 rounded-full font-medium border ${
@@ -55,7 +55,7 @@ export default function AdminInviteCode({ currentCode }: { currentCode: string |
             value={code}
             onChange={e => { setCode(e.target.value); setSaved(false) }}
             placeholder="Enter an invite code…"
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 pr-10"
+            className="w-full bg-black/[0.03] border border-black/[0.10] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 focus:border-[#0071e3]/50 pr-10"
             autoComplete="off"
           />
           <button
@@ -70,7 +70,7 @@ export default function AdminInviteCode({ currentCode }: { currentCode: string |
         <button
           onClick={save}
           disabled={saving}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40 shrink-0"
+          className="bg-[#0071e3] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1] disabled:opacity-40 shrink-0"
         >
           {saving ? "Saving…" : isEnabled ? "Save Code" : "Disable"}
         </button>

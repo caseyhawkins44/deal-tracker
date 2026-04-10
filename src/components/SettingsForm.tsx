@@ -44,7 +44,7 @@ export default function SettingsForm({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 space-y-6">
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 space-y-6">
       <SettingField
         label="Minimum Cash-on-Cash Return"
         unit="%"
@@ -93,7 +93,7 @@ export default function SettingsForm({
         <button
           onClick={save}
           disabled={saving}
-          className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40"
+          className="bg-[#0071e3] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-[#0065d1] disabled:opacity-40"
         >
           {saving ? "Saving…" : "Save Criteria"}
         </button>
@@ -131,7 +131,7 @@ function SettingField({
           step={step}
           min={0}
           onChange={(e) => onChange(parseFloat(e.target.value) || 0)}
-          className="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-28 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/40"
         />
         {!unitPrefix && <span className="text-sm text-gray-500">{unit}</span>}
       </div>

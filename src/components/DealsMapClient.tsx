@@ -7,7 +7,7 @@ const DealsMap = dynamic(() => import("./DealsMap"), {
   ssr: false,
   loading: () => (
     <div
-      className="rounded-2xl border border-gray-200 bg-gray-50 flex items-center justify-center"
+      className="rounded-[18px] border border-black/[0.07] shadow-sm bg-[#f5f5f7] flex items-center justify-center"
       style={{ height: 520 }}
     >
       <p className="text-sm text-gray-400">Loading map…</p>

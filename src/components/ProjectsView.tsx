@@ -182,7 +182,7 @@ export default function ProjectsView({
               {projects.length} project{projects.length !== 1 ? "s" : ""} · {totalDeals} deal{totalDeals !== 1 ? "s" : ""} total
             </p>
           </div>
-          <Link href="/deals/new" className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">
+          <Link href="/deals/new" className="bg-[#0071e3] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1]">
             + Add Deal
           </Link>
         </div>
@@ -195,12 +195,12 @@ export default function ProjectsView({
             value={newName}
             onChange={e => setNewName(e.target.value)}
             onKeyDown={e => e.key === "Enter" && createProject()}
-            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/40"
           />
           <button
             onClick={createProject}
             disabled={creating || !newName.trim()}
-            className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40"
+            className="bg-[#0071e3] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1] disabled:opacity-40"
           >
             {creating ? "Creating…" : "Create Project"}
           </button>
@@ -236,7 +236,7 @@ export default function ProjectsView({
           )}
 
           {projects.length === 0 && unassigned.length === 0 && (
-            <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
+            <div className="text-center py-20 bg-white rounded-[18px] border border-black/[0.07] shadow-sm">
               <p className="text-gray-400 text-lg mb-2">No projects yet</p>
               <p className="text-gray-400 text-sm">Create a project above to group deals by area.</p>
             </div>
@@ -273,7 +273,7 @@ function ProjectBucket({
   return (
     <div
       ref={setNodeRef}
-      className={`bg-white border rounded-2xl overflow-hidden transition-colors ${isOver ? "border-blue-400 ring-2 ring-blue-100" : "border-gray-200"}`}
+      className={`bg-white border rounded-[18px] overflow-hidden transition-all shadow-sm ${isOver ? "border-[#0071e3]/50 ring-2 ring-[#0071e3]/10" : "border-black/[0.07]"}`}
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
         {editing ? (
@@ -284,9 +284,9 @@ function ProjectBucket({
               value={editName}
               onChange={e => onEditChange(e.target.value)}
               onKeyDown={e => { if (e.key === "Enter") onEditSave(); if (e.key === "Escape") onEditCancel() }}
-              className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="border border-gray-300 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/40"
             />
-            <button onClick={onEditSave} className="text-sm text-blue-600 hover:text-blue-800 font-medium">Save</button>
+            <button onClick={onEditSave} className="text-sm text-[#0071e3] hover:text-[#0065d1] font-medium">Save</button>
             <button onClick={onEditCancel} className="text-sm text-gray-400 hover:text-gray-600">Cancel</button>
           </div>
         ) : (
@@ -296,7 +296,7 @@ function ProjectBucket({
                 className={`text-gray-400 transition-transform ${collapsed ? "-rotate-90" : ""}`}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
               </svg>
-              <span className="font-semibold text-gray-900 group-hover:text-blue-600">{project.name}</span>
+              <span className="font-semibold text-gray-900 group-hover:text-[#0071e3]">{project.name}</span>
             </button>
             <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
               {project.deals.length} deal{project.deals.length !== 1 ? "s" : ""}
@@ -311,14 +311,14 @@ function ProjectBucket({
 
       {!collapsed && (
         project.deals.length === 0 ? (
-          <div className={`px-5 py-6 text-center text-sm transition-colors ${isOver ? "text-blue-400" : "text-gray-400"}`}>
+          <div className={`px-5 py-6 text-center text-sm transition-colors ${isOver ? "text-[#0071e3]/70" : "text-gray-400"}`}>
             {isOver ? "Drop here to add to this project" : "Drag deals here, or assign via the deal form."}
           </div>
         ) : (
           <div className="divide-y divide-gray-50">
             {project.deals.map(deal => <DraggableDealRow key={deal.id} deal={deal} criteria={criteria} />)}
             {isOver && (
-              <div className="px-5 py-3 text-center text-xs text-blue-500 bg-blue-50">Drop to add here</div>
+              <div className="px-5 py-3 text-center text-xs text-[#0071e3] bg-[#e8f1fb]">Drop to add here</div>
             )}
           </div>
         )
@@ -340,7 +340,7 @@ function UnassignedBucket({
   return (
     <div
       ref={setNodeRef}
-      className={`bg-white border rounded-2xl overflow-hidden transition-colors ${isOver ? "border-gray-400 ring-2 ring-gray-100" : "border-gray-200"}`}
+      className={`bg-white border rounded-[18px] overflow-hidden transition-all shadow-sm ${isOver ? "border-black/[0.20] ring-2 ring-black/[0.04]" : "border-black/[0.07]"}`}
     >
       <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100">
         <div className="flex items-center gap-3">
@@ -398,8 +398,8 @@ function DraggableDealRow({ deal, criteria }: { deal: Deal; criteria: Criteria }
 
 function DealRowOverlay({ deal, criteria }: { deal: Deal; criteria: Criteria }) {
   return (
-    <div className="bg-white border border-blue-300 rounded-xl shadow-lg opacity-95 flex items-center">
-      <div className="pl-3 pr-1 py-3.5 text-blue-400">
+    <div className="bg-white border border-[#0071e3]/40 rounded-xl shadow-lg opacity-95 flex items-center">
+      <div className="pl-3 pr-1 py-3.5 text-[#0071e3]/70">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
           <circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/>
           <circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/>
@@ -419,7 +419,7 @@ function DealRowContent({ deal, criteria }: { deal: Deal; criteria: Criteria }) 
   const meetsCF = m.monthlyCashFlow >= criteria.minMonthlyCashFlow
 
   return (
-    <Link href={`/deals/${deal.id}`} className="flex flex-1 items-center justify-between px-4 py-3.5 hover:bg-gray-50 transition-colors min-w-0">
+    <Link href={`/deals/${deal.id}`} className="flex flex-1 items-center justify-between px-4 py-3.5 hover:bg-black/[0.02] transition-colors min-w-0">
       <div className="min-w-0">
         <p className="text-sm font-medium text-gray-900 truncate">{deal.name}</p>
         <p className="text-xs text-gray-400">{deal.city}, {deal.state} · {deal.status}</p>

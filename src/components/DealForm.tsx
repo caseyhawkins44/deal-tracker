@@ -203,7 +203,7 @@ export default function DealForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Property Info */}
-      <section className="bg-white border border-gray-200 rounded-2xl p-6">
+      <section className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
         <h2 className="font-semibold text-gray-900 mb-4">Property Info</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
 
@@ -317,7 +317,7 @@ export default function DealForm({
                 type="button"
                 onClick={importFromZillow}
                 disabled={importing || !form.zillowUrl}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40 shrink-0"
+                className="bg-[#0071e3] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1] disabled:opacity-40 shrink-0"
               >
                 {importing ? "Importing…" : "Import"}
               </button>
@@ -331,7 +331,7 @@ export default function DealForm({
       </section>
 
       {/* Purchase & Financing */}
-      <section className="bg-white border border-gray-200 rounded-2xl p-6">
+      <section className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
         <h2 className="font-semibold text-gray-900 mb-4">Purchase & Financing</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
@@ -360,7 +360,7 @@ export default function DealForm({
               <>
                 Closing Costs
                 {!closingCostsManual && form.purchasePrice > 0 && (
-                  <span className="text-[10px] text-blue-500 bg-blue-50 border border-blue-200 px-1.5 rounded-full font-normal">
+                  <span className="text-[10px] text-[#0071e3] bg-[#e8f1fb] border border-[#0071e3]/25 px-1.5 rounded-full font-normal">
                     estimated 2.5%
                   </span>
                 )}
@@ -412,7 +412,7 @@ export default function DealForm({
       </section>
 
       {/* Income & Expenses */}
-      <section className="bg-white border border-gray-200 rounded-2xl p-6">
+      <section className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
         <h2 className="font-semibold text-gray-900 mb-4">Income & Expenses</h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
 
@@ -465,7 +465,7 @@ export default function DealForm({
             <>
               Insurance ($/mo)
               {!insuranceManual && form.purchasePrice > 0 && (
-                <span className="text-[10px] text-blue-500 bg-blue-50 border border-blue-200 px-1.5 rounded-full font-normal">est. 0.5%/yr</span>
+                <span className="text-[10px] text-[#0071e3] bg-[#e8f1fb] border border-[#0071e3]/25 px-1.5 rounded-full font-normal">est. 0.5%/yr</span>
               )}
               <InfoTooltip content="Estimated at 0.5% of purchase price per year ÷ 12. Landlord insurance (dwelling policy) typically runs 0.4–0.8% of home value annually depending on location, age, and coverage." />
             </>
@@ -481,7 +481,7 @@ export default function DealForm({
             <>
               Maintenance ($/mo)
               {!maintenanceManual && form.purchasePrice > 0 && (
-                <span className="text-[10px] text-blue-500 bg-blue-50 border border-blue-200 px-1.5 rounded-full font-normal">est. 1%/yr</span>
+                <span className="text-[10px] text-[#0071e3] bg-[#e8f1fb] border border-[#0071e3]/25 px-1.5 rounded-full font-normal">est. 1%/yr</span>
               )}
               <InfoTooltip content="Estimated at 1% of purchase price per year ÷ 12 — the standard rule of thumb for ongoing repairs and upkeep. Older homes or those needing work may run higher (1.5–2%)." />
             </>
@@ -517,7 +517,7 @@ export default function DealForm({
       </section>
 
       {/* Notes */}
-      <section className="bg-white border border-gray-200 rounded-2xl p-6">
+      <section className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
         <h2 className="font-semibold text-gray-900 mb-4">Notes</h2>
         <textarea
           rows={4}
@@ -534,14 +534,14 @@ export default function DealForm({
         <button
           type="submit"
           disabled={loading}
-          className="bg-blue-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+          className="bg-[#0071e3] text-white px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-[#0065d1] disabled:opacity-50"
         >
           {loading ? "Saving…" : dealId ? "Save Changes" : "Add Deal"}
         </button>
         <button
           type="button"
           onClick={() => router.back()}
-          className="border border-gray-300 text-gray-700 px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-gray-50"
+          className="border border-black/[0.12] text-gray-700 px-6 py-2.5 rounded-xl text-sm font-medium hover:bg-black/[0.04]"
         >
           Cancel
         </button>
@@ -551,7 +551,7 @@ export default function DealForm({
 }
 
 const inputCls =
-  "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+  "w-full bg-black/[0.03] border border-black/[0.10] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 focus:border-[#0071e3]/50"
 
 function Field({
   label,

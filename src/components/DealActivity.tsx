@@ -37,10 +37,10 @@ export default function DealActivity({ dealId }: { dealId: string }) {
   }, [open, entries.length, load])
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl mt-6 overflow-hidden">
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm mt-6 overflow-hidden">
       <button
         onClick={() => setOpen((o) => !o)}
-        className="w-full flex items-center justify-between px-6 py-4 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-6 py-4 hover:bg-black/[0.02] transition-colors"
       >
         <span className="font-semibold text-gray-900">Timeline</span>
         <span className="text-gray-400 text-sm">{open ? "▲ Collapse" : "▼ Expand"}</span>

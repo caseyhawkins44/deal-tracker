@@ -26,7 +26,7 @@ export default function DealVisualizations({ deal }: { deal: Deal }) {
   const m = analyzeDeal(deal)
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mt-6">
       <h2 className="font-semibold mb-4">Visualizations</h2>
 
       <div className="flex gap-0 mb-6 border-b border-gray-200 overflow-x-auto">
@@ -36,7 +36,7 @@ export default function DealVisualizations({ deal }: { deal: Deal }) {
             onClick={() => setTab(t.key)}
             className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors whitespace-nowrap ${
               tab === t.key
-                ? "border-blue-600 text-blue-600"
+                ? "border-[#0071e3] text-[#0071e3]"
                 : "border-transparent text-gray-500 hover:text-gray-700"
             }`}
           >
@@ -382,7 +382,7 @@ function TenYearProjection({ deal, m }: { deal: Deal; m: M }) {
             type="number"
             value={rentGrowth}
             onChange={(e) => setRentGrowth(Number(e.target.value))}
-            className="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/40"
             step={0.5}
             min={0}
             max={20}
@@ -395,7 +395,7 @@ function TenYearProjection({ deal, m }: { deal: Deal; m: M }) {
             type="number"
             value={appreciation}
             onChange={(e) => setAppreciation(Number(e.target.value))}
-            className="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-16 border border-gray-300 rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/40"
             step={0.5}
             min={0}
             max={20}

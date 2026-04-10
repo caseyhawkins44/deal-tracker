@@ -98,7 +98,7 @@ export default function DealVoting({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 mb-6">
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="font-semibold">Partner Votes</h2>
         {votes.length > 0 && (
@@ -170,21 +170,21 @@ export default function DealVoting({
                 placeholder="Explain your reasoning (required, min 10 characters)…"
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                className="w-full bg-black/[0.03] border border-black/[0.10] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 focus:border-[#0071e3]/50 resize-none"
               />
               {error && <p className="text-sm text-red-600">{error}</p>}
               <div className="flex gap-2">
                 <button
                   onClick={submit}
                   disabled={saving}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40"
+                  className="bg-[#0071e3] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1] disabled:opacity-40"
                 >
                   {saving ? "Saving…" : myVote ? "Update Vote" : "Submit Vote"}
                 </button>
                 {editing && (
                   <button
                     onClick={() => { setEditing(false); setSelected(myVote?.vote ?? null); setNote(myVote?.note ?? "") }}
-                    className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
+                    className="border border-black/[0.12] text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-black/[0.04]"
                   >
                     Cancel
                   </button>
@@ -199,7 +199,7 @@ export default function DealVoting({
               </span>
               <button
                 onClick={() => setEditing(true)}
-                className="text-sm text-blue-600 hover:underline"
+                className="text-sm text-[#0071e3] hover:underline"
               >
                 Edit Vote
               </button>

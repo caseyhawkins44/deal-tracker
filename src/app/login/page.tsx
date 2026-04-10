@@ -48,23 +48,23 @@ export default function LoginPage() {
     router.push("/")
   }
 
-  const inputCls = "w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+  const inputCls = "w-full bg-black/[0.03] border border-black/[0.10] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 focus:border-[#0071e3]/50"
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 w-full max-w-md p-8">
+    <div className="min-h-screen bg-[#f5f5f7] flex items-center justify-center px-4">
+      <div className="bg-white/90 rounded-[22px] shadow-xl border border-black/[0.07] w-full max-w-md p-8" style={{backdropFilter:"blur(20px)"}}>
         <h1 className="text-2xl font-bold text-gray-900 mb-1">Deal Tracker</h1>
         <p className="text-gray-500 text-sm mb-6">Real estate portfolio analysis</p>
 
         <div className="flex border-b border-gray-200 mb-6">
           <button
-            className={`pb-2 px-4 text-sm font-medium ${tab === "login" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500"}`}
+            className={`pb-2 px-4 text-sm font-medium ${tab === "login" ? "border-b-2 border-[#0071e3] text-[#0071e3]" : "text-gray-500"}`}
             onClick={() => { setTab("login"); setError("") }}
           >
             Sign In
           </button>
           <button
-            className={`pb-2 px-4 text-sm font-medium ${tab === "register" ? "border-b-2 border-blue-600 text-blue-600" : "text-gray-500"}`}
+            className={`pb-2 px-4 text-sm font-medium ${tab === "register" ? "border-b-2 border-[#0071e3] text-[#0071e3]" : "text-gray-500"}`}
             onClick={() => { setTab("register"); setError("") }}
           >
             Create Account
@@ -82,7 +82,7 @@ export default function LoginPage() {
               <input type="password" required value={password} onChange={e => setPassword(e.target.value)} className={inputCls} />
             </div>
             {error && <p className="text-red-600 text-sm">{error}</p>}
-            <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+            <button type="submit" disabled={loading} className="w-full bg-[#0071e3] text-white py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1] disabled:opacity-50">
               {loading ? "Signing in…" : "Sign In"}
             </button>
           </form>
@@ -115,7 +115,7 @@ export default function LoginPage() {
               />
             </div>
             {error && <p className="text-red-600 text-sm">{error}</p>}
-            <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-50">
+            <button type="submit" disabled={loading} className="w-full bg-[#0071e3] text-white py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1] disabled:opacity-50">
               {loading ? "Creating account…" : "Create Account"}
             </button>
           </form>

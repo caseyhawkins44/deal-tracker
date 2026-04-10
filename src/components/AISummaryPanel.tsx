@@ -37,7 +37,7 @@ export default function AISummaryPanel({ dealId }: { dealId: string }) {
   // Hide entirely if we just discovered the key isn't set
   if (state === "idle" && errorMsg === "" && summary === "") {
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+      <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mt-6">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-semibold text-gray-900">AI Deal Summary</h2>
@@ -45,7 +45,7 @@ export default function AISummaryPanel({ dealId }: { dealId: string }) {
           </div>
           <button
             onClick={generate}
-            className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors"
+            className="flex items-center gap-2 bg-[#0071e3] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1] transition-colors"
           >
             <SparkleIcon />
             Generate AI Summary
@@ -57,7 +57,7 @@ export default function AISummaryPanel({ dealId }: { dealId: string }) {
 
   if (state === "loading") {
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+      <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mt-6">
         <h2 className="font-semibold text-gray-900 mb-4">AI Deal Summary</h2>
         <div className="flex items-center gap-3 text-sm text-gray-500">
           <Spinner />
@@ -69,12 +69,12 @@ export default function AISummaryPanel({ dealId }: { dealId: string }) {
 
   if (state === "error") {
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+      <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mt-6">
         <h2 className="font-semibold text-gray-900 mb-3">AI Deal Summary</h2>
         <p className="text-sm text-amber-600 mb-3">{errorMsg}</p>
         <button
           onClick={generate}
-          className="flex items-center gap-2 border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
+          className="flex items-center gap-2 border border-black/[0.12] text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-black/[0.04] transition-colors"
         >
           <SparkleIcon />
           Try again
@@ -85,7 +85,7 @@ export default function AISummaryPanel({ dealId }: { dealId: string }) {
 
   if (state === "done") {
     return (
-      <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+      <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mt-6">
         <h2 className="font-semibold text-gray-900 mb-4">AI Deal Summary</h2>
         <p className="text-sm text-gray-800 leading-relaxed">{summary}</p>
         <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-100">

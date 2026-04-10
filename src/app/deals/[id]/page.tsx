@@ -68,7 +68,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
                   href={deal.zillowUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-xs text-blue-600 hover:underline flex items-center gap-1"
+                  className="text-xs text-[#0071e3] hover:underline flex items-center gap-1"
                 >
                   View on Zillow ↗
                 </a>
@@ -79,7 +79,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             <div className="flex gap-2">
               <Link
                 href={`/deals/${deal.id}/edit`}
-                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
+                className="border border-black/[0.12] text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-black/[0.04]"
               >
                 Edit
               </Link>
@@ -127,7 +127,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
 
         <div className="grid md:grid-cols-2 gap-6">
           {/* Purchase Summary */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
             <h2 className="font-semibold mb-4">Purchase & Financing</h2>
             <dl className="space-y-2.5">
               <Row label="Purchase Price" value={fmt(deal.purchasePrice)} />
@@ -144,7 +144,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
           </div>
 
           {/* Cash Flow Breakdown */}
-          <div className="bg-white border border-gray-200 rounded-2xl p-6">
+          <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
             <h2 className="font-semibold mb-4">Monthly Cash Flow Breakdown</h2>
             <dl className="space-y-2.5">
               <Row label="Gross Rent" value={fmt(deal.monthlyRent)} />
@@ -183,7 +183,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
         </div>
 
         {/* Annual Summary */}
-        <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+        <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mt-6">
           <h2 className="font-semibold mb-4">Annual Summary</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             <div>
@@ -217,7 +217,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
         <AISummaryPanel dealId={deal.id} />
 
         {deal.notes && (
-          <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+          <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mt-6">
             <h2 className="font-semibold mb-2">Notes</h2>
             <p className="text-sm text-gray-600 whitespace-pre-wrap">{deal.notes}</p>
           </div>
@@ -250,7 +250,7 @@ function BigMetric({
   dot: "green" | "amber" | "red"
 }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-5">
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-5">
       <p className="text-xs text-gray-500 mb-1 flex items-center gap-1">
         {label}
         <InfoTooltip content={tooltip} />

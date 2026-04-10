@@ -85,13 +85,13 @@ export default function AddressSearch({ value, onChange, onSelect, className }: 
         )}
       </div>
       {open && suggestions.length > 0 && (
-        <ul className="absolute z-50 top-full mt-1 w-full bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden">
+        <ul className="absolute z-50 top-full mt-1 w-full bg-white border border-black/[0.07] rounded-xl shadow-xl overflow-hidden">
           {suggestions.map((s, i) => (
             <li key={i}>
               <button
                 type="button"
                 onMouseDown={() => handleSelect(s)}
-                className="w-full text-left px-4 py-2.5 text-sm hover:bg-blue-50 transition-colors"
+                className="w-full text-left px-4 py-2.5 text-sm hover:bg-[#e8f1fb] transition-colors"
               >
                 <span className="font-medium text-gray-900">{s.street}</span>
                 <span className="text-gray-500">, {s.city}, {s.state} {s.zipCode}</span>

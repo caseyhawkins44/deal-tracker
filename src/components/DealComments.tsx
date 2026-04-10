@@ -17,7 +17,7 @@ type UserOption = { id: string; name: string | null; email: string }
 function renderBody(text: string) {
   return text.split(/(@\w+)/g).map((part, i) =>
     part.startsWith("@") ? (
-      <strong key={i} className="text-blue-600 font-semibold">
+      <strong key={i} className="text-[#0071e3] font-semibold">
         {part}
       </strong>
     ) : (
@@ -147,7 +147,7 @@ export default function DealComments({
   }
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
+    <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6 mt-6">
       <h2 className="font-semibold mb-4">Discussion</h2>
 
       {loading ? (
@@ -220,18 +220,18 @@ export default function DealComments({
           value={body}
           onChange={handleBodyChange}
           onKeyDown={handleKeyDown}
-          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+          className="w-full bg-black/[0.03] border border-black/[0.10] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 focus:border-[#0071e3]/50 resize-none"
         />
 
         {/* @mention dropdown */}
         {mentionQuery !== null && mentionMatches.length > 0 && (
-          <div className="absolute bottom-full mb-1 left-0 bg-white border border-gray-200 rounded-xl shadow-lg overflow-hidden z-20 w-56">
+          <div className="absolute bottom-full mb-1 left-0 bg-white border border-black/[0.07] rounded-xl shadow-xl overflow-hidden z-20 w-56">
             {mentionMatches.map((u, i) => (
               <button
                 key={u.id}
                 onMouseDown={(e) => { e.preventDefault(); insertMention(u) }}
                 className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                  i === mentionIndex ? "bg-blue-50 text-blue-700" : "text-gray-700 hover:bg-gray-50"
+                  i === mentionIndex ? "bg-[#e8f1fb] text-[#0071e3]" : "text-gray-700 hover:bg-black/[0.02]"
                 }`}
               >
                 <span className="font-medium">{u.name ?? u.email}</span>
@@ -244,7 +244,7 @@ export default function DealComments({
         <button
           onClick={post}
           disabled={posting || !body.trim()}
-          className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40"
+          className="bg-[#0071e3] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1] disabled:opacity-40"
         >
           {posting ? "Posting…" : "Post Comment"}
         </button>

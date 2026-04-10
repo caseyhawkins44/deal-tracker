@@ -75,7 +75,7 @@ export default function AdminUsersPanel({
 
   return (
     <>
-      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+      <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm overflow-hidden">
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-gray-100 bg-gray-50 text-xs text-gray-500 uppercase tracking-wide">
@@ -88,7 +88,7 @@ export default function AdminUsersPanel({
           </thead>
           <tbody className="divide-y divide-gray-100">
             {users.map((user) => (
-              <tr key={user.id} className="hover:bg-gray-50 transition-colors">
+              <tr key={user.id} className="hover:bg-black/[0.02] transition-colors">
                 <td className="px-5 py-4">
                   <p className="font-medium text-gray-900">{user.name ?? "—"}</p>
                   <p className="text-xs text-gray-400">{user.email}</p>
@@ -123,7 +123,7 @@ export default function AdminUsersPanel({
                     </button>
                     <button
                       onClick={() => { setResetTarget(user); setResetError(""); setResetSuccess(""); setNewPassword("") }}
-                      className="text-xs text-gray-500 hover:text-blue-600 border border-gray-200 hover:border-blue-300 px-2.5 py-1 rounded-lg transition-colors"
+                      className="text-xs text-gray-500 hover:text-[#0071e3] border border-gray-200 hover:border-[#0071e3]/40 px-2.5 py-1 rounded-lg transition-colors"
                     >
                       Reset password
                     </button>
@@ -146,7 +146,7 @@ export default function AdminUsersPanel({
       {/* Reset Password Modal */}
       {resetTarget && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+          <div className="bg-white rounded-[18px] shadow-xl border border-black/[0.07] w-full max-w-md p-6">
             <h2 className="font-semibold text-gray-900 mb-1">Reset Password</h2>
             <p className="text-sm text-gray-500 mb-4">
               Set a new password for <strong>{resetTarget.name ?? resetTarget.email}</strong>.
@@ -156,7 +156,7 @@ export default function AdminUsersPanel({
               placeholder="New password (min 8 characters)"
               value={newPassword}
               onChange={(e) => { setNewPassword(e.target.value); setResetError(""); setResetSuccess("") }}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 mb-3"
+              className="w-full bg-black/[0.03] border border-black/[0.10] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 focus:border-[#0071e3]/50 mb-3"
               autoFocus
             />
             {resetError && <p className="text-sm text-red-600 mb-3">{resetError}</p>}
@@ -165,13 +165,13 @@ export default function AdminUsersPanel({
               <button
                 onClick={submitReset}
                 disabled={saving === resetTarget.id}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 disabled:opacity-40"
+                className="bg-[#0071e3] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1] disabled:opacity-40"
               >
                 {saving === resetTarget.id ? "Saving…" : "Update Password"}
               </button>
               <button
                 onClick={() => setResetTarget(null)}
-                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
+                className="border border-black/[0.12] text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-black/[0.04]"
               >
                 Close
               </button>
@@ -183,7 +183,7 @@ export default function AdminUsersPanel({
       {/* Delete Confirm Modal */}
       {deleteTarget && (
         <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-md p-6">
+          <div className="bg-white rounded-[18px] shadow-xl border border-black/[0.07] w-full max-w-md p-6">
             <h2 className="font-semibold text-gray-900 mb-1">Delete User</h2>
             <p className="text-sm text-gray-600 mb-6">
               Are you sure you want to permanently delete{" "}
@@ -199,7 +199,7 @@ export default function AdminUsersPanel({
               </button>
               <button
                 onClick={() => setDeleteTarget(null)}
-                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
+                className="border border-black/[0.12] text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-black/[0.04]"
               >
                 Cancel
               </button>

@@ -27,7 +27,7 @@ export default function DeleteDealButton({ dealId }: { dealId: string }) {
         </button>
         <button
           onClick={() => setConfirming(false)}
-          className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
+          className="border border-black/[0.12] text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-black/[0.04]"
         >
           Cancel
         </button>

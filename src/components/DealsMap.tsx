@@ -61,10 +61,10 @@ export default function DealsMap({ deals }: { deals: SerializedDeal[] }) {
   }, [deals])
 
   return (
-    <div className="relative rounded-2xl overflow-hidden border border-gray-200" style={{ height: 520 }}>
+    <div className="relative rounded-[18px] overflow-hidden border border-black/[0.07] shadow-sm" style={{ height: 520 }}>
       {loading && (
         <div className="absolute inset-0 bg-white/80 z-[1000] flex flex-col items-center justify-center gap-2">
-          <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-2 border-[#0071e3] border-t-transparent rounded-full animate-spin" />
           <p className="text-sm text-gray-500">Locating {deals.length} deal{deals.length !== 1 ? "s" : ""}…</p>
         </div>
       )}
@@ -112,7 +112,7 @@ export default function DealsMap({ deals }: { deals: SerializedDeal[] }) {
                   </div>
                   <a
                     href={`/deals/${deal.id}`}
-                    className="text-blue-600 text-xs hover:underline"
+                    className="text-[#0071e3] text-xs hover:underline"
                   >
                     View full details →
                   </a>

@@ -63,14 +63,14 @@ export default async function DealsPage() {
             {deals.length >= 2 && (
               <Link
                 href="/compare"
-                className="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-gray-50"
+                className="border border-black/[0.12] text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-black/[0.04]"
               >
                 Compare Deals
               </Link>
             )}
             <Link
               href="/deals/new"
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
+              className="bg-[#0071e3] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#0065d1]"
             >
               + Add Deal
             </Link>
@@ -78,11 +78,11 @@ export default async function DealsPage() {
         </div>
 
         {deals.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-2xl border border-gray-200">
+          <div className="text-center py-20 bg-white rounded-[18px] border border-black/[0.07] shadow-sm">
             <p className="text-gray-400 text-lg mb-4">No deals yet</p>
             <Link
               href="/deals/new"
-              className="bg-blue-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-700"
+              className="bg-[#0071e3] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-[#0065d1]"
             >
               Add your first deal
             </Link>

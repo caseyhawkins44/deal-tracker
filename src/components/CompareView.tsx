@@ -55,7 +55,7 @@ export default function CompareView({ deals }: { deals: Deal[] }) {
   return (
     <div className="space-y-6">
       {/* Deal Selector */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-5">
+      <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-5">
         <p className="text-sm font-medium text-gray-700 mb-3">Choose deals to compare ({selected.length}/4 selected)</p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
           {deals.map(deal => (
@@ -64,8 +64,8 @@ export default function CompareView({ deals }: { deals: Deal[] }) {
               onClick={() => toggle(deal.id)}
               className={`text-left px-4 py-3 rounded-xl border text-sm transition-all ${
                 selected.includes(deal.id)
-                  ? "border-blue-500 bg-blue-50 text-blue-800"
-                  : "border-gray-200 hover:border-gray-300"
+                  ? "border-[#0071e3] bg-[#e8f1fb] text-blue-800"
+                  : "border-black/[0.07] hover:border-black/[0.14]"
               }`}
             >
               <p className="font-medium">{deal.name}</p>
@@ -79,7 +79,7 @@ export default function CompareView({ deals }: { deals: Deal[] }) {
       {selectedDeals.length >= 2 && (() => {
         const metrics = selectedDeals.map(d => analyzeDeal(d))
         return (
-          <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden">
+          <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm">
                 <thead>
@@ -87,7 +87,7 @@ export default function CompareView({ deals }: { deals: Deal[] }) {
                     <th className="text-left px-5 py-3 text-xs font-medium text-gray-500 w-44">Metric</th>
                     {selectedDeals.map(d => (
                       <th key={d.id} className="text-left px-5 py-3">
-                        <Link href={`/deals/${d.id}`} className="font-semibold text-gray-900 hover:text-blue-600">
+                        <Link href={`/deals/${d.id}`} className="font-semibold text-gray-900 hover:text-[#0071e3]">
                           {d.name}
                         </Link>
                         <p className="text-xs text-gray-400 font-normal">{d.city}, {d.state}</p>
@@ -234,12 +234,12 @@ function CompareRow({
             className={`px-5 py-3 font-medium ${
               isPositive === true ? "text-green-600" :
               isPositive === false ? "text-red-500" :
-              isBest ? "text-blue-600" : "text-gray-900"
+              isBest ? "text-[#0071e3]" : "text-gray-900"
             }`}
           >
             {val}
             {isBest && !colorize && (
-              <span className="ml-1.5 text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded-full">best</span>
+              <span className="ml-1.5 text-xs bg-[#e8f1fb] text-[#0071e3] px-1.5 py-0.5 rounded-full">best</span>
             )}
           </td>
         )

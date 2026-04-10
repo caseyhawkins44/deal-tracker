@@ -34,7 +34,7 @@ export type SerializedDeal = {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  Prospecting: "bg-blue-100 text-blue-700",
+  Prospecting: "bg-[#e8f1fb] text-[#0071e3]",
   "Under Analysis": "bg-yellow-100 text-yellow-700",
   "Offer Made": "bg-purple-100 text-purple-700",
   Passed: "bg-gray-100 text-gray-600",
@@ -109,7 +109,7 @@ export default function DealsView({
               <Link
                 key={deal.id}
                 href={`/deals/${deal.id}`}
-                className="bg-white border border-gray-200 rounded-2xl p-5 hover:border-blue-300 hover:shadow-sm transition-all"
+                className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-5 hover:border-[#0071e3]/40 hover:shadow-sm transition-all"
               >
                 <div className="flex items-start justify-between">
                   <div>

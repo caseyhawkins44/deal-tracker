@@ -17,7 +17,7 @@ export default function BookmarkletInstaller() {
   return (
     <div className="space-y-6">
       {/* The draggable bookmarklet */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6">
+      <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
         <p className="text-sm font-medium text-gray-700 mb-4">
           Step 1 — Drag this button to your bookmarks bar:
         </p>
@@ -45,7 +45,7 @@ export default function BookmarkletInstaller() {
       </div>
 
       {/* Instructions */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6">
+      <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
         <p className="text-sm font-medium text-gray-700 mb-4">Step 2 — How to use it:</p>
         <ol className="space-y-3">
           {[
@@ -55,7 +55,7 @@ export default function BookmarkletInstaller() {
             "Review the numbers, fill in the remaining fields (down payment, rate, etc.), and save",
           ].map((step, i) => (
             <li key={i} className="flex gap-3 text-sm text-gray-600">
-              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-blue-100 text-blue-700 font-semibold text-xs flex items-center justify-center">
+              <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#e8f1fb] text-[#0071e3] font-semibold text-xs flex items-center justify-center">
                 {i + 1}
               </span>
               {step}
@@ -65,7 +65,7 @@ export default function BookmarkletInstaller() {
       </div>
 
       {/* What gets imported */}
-      <div className="bg-white border border-gray-200 rounded-2xl p-6">
+      <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
         <p className="text-sm font-medium text-gray-700 mb-3">What gets imported automatically:</p>
         <div className="grid grid-cols-2 gap-2 text-sm text-gray-600">
           {[
