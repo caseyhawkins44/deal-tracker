@@ -12,7 +12,6 @@ import { DEFAULT_CRITERIA, metricDot, type InvestmentCriteriaType } from "@/lib/
 import DeleteDealButton from "@/components/DeleteDealButton"
 import ZillowRefreshButton from "@/components/ZillowRefreshButton"
 import ScenarioAnalyzer from "@/components/ScenarioAnalyzer"
-import DealVisualizations from "@/components/DealVisualizations"
 import AISummaryPanel from "@/components/AISummaryPanel"
 
 const TOOLTIPS = {
@@ -232,9 +231,6 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
 
         {/* Voting */}
         <DealVoting dealId={deal.id} currentUserId={session.user.id!} />
-
-        {/* Visualizations */}
-        <DealVisualizations deal={deal} />
 
         {/* Scenario Analysis */}
         <ScenarioAnalyzer deal={deal} />
