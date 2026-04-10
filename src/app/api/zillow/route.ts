@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
   }
 
   const apiKey = process.env.RAPIDAPI_KEY
-  if (!apiKey) return NextResponse.json({ error: "RAPIDAPI_KEY not configured" }, { status: 500 })
+  if (!apiKey) return NextResponse.json({ error: "Zillow import is not available" }, { status: 503 })
 
   const res = await fetch(
     `https://private-zillow.p.rapidapi.com/pro/byurl?url=${encodeURIComponent(url)}`,

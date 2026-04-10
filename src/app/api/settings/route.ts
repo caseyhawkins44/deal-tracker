@@ -22,23 +22,17 @@ export async function PUT(req: NextRequest) {
 
   try {
     const body = await req.json()
+    const data = {
+      minCashOnCash: Number(body.minCashOnCash),
+      minCapRate: Number(body.minCapRate),
+      minDscr: Number(body.minDscr),
+      maxGrm: Number(body.maxGrm),
+      minMonthlyCashFlow: Number(body.minMonthlyCashFlow),
+    }
     const criteria = await prisma.investmentCriteria.upsert({
       where: { id: "singleton" },
-      create: {
-        id: "singleton",
-        minCashOnCash: Number(body.minCashOnCash),
-        minCapRate: Number(body.minCapRate),
-        minDscr: Number(body.minDscr),
-        maxGrm: Number(body.maxGrm),
-        minMonthlyCashFlow: Number(body.minMonthlyCashFlow),
-      },
-      update: {
-        minCashOnCash: Number(body.minCashOnCash),
-        minCapRate: Number(body.minCapRate),
-        minDscr: Number(body.minDscr),
-        maxGrm: Number(body.maxGrm),
-        minMonthlyCashFlow: Number(body.minMonthlyCashFlow),
-      },
+      create: { id: "singleton", ...data },
+      update: data,
     })
     return NextResponse.json(criteria)
   } catch (e) {

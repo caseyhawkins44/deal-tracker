@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
-
-async function requireAdmin(userId: string) {
-  const me = await prisma.user.findUnique({ where: { id: userId }, select: { role: true } })
-  return me?.role === "admin"
-}
+import { requireAdmin } from "@/lib/admin"
 
 export async function GET() {
   const session = await auth()

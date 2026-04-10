@@ -2,11 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
-
-async function requireAdmin(sessionUserId: string) {
-  const me = await prisma.user.findUnique({ where: { id: sessionUserId }, select: { role: true } })
-  return me?.role === "admin"
-}
+import { requireAdmin } from "@/lib/admin"
 
 // PATCH: update role or reset password
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {

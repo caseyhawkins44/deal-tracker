@@ -34,6 +34,8 @@ export async function POST(req: NextRequest, { params }: { params: Promise<{ id:
       return NextResponse.json({ error: "Invalid vote" }, { status: 400 })
     if (!note || note.trim().length < 10)
       return NextResponse.json({ error: "Note must be at least 10 characters" }, { status: 400 })
+    if (note.trim().length > 2000)
+      return NextResponse.json({ error: "Note must be 2000 characters or fewer" }, { status: 400 })
 
     const existing = await prisma.vote.findUnique({
       where: { dealId_userId: { dealId: id, userId: session.user.id } },
