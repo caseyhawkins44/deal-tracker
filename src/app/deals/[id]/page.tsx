@@ -13,6 +13,7 @@ import DeleteDealButton from "@/components/DeleteDealButton"
 import ZillowRefreshButton from "@/components/ZillowRefreshButton"
 import ScenarioAnalyzer from "@/components/ScenarioAnalyzer"
 import DealVisualizations from "@/components/DealVisualizations"
+import AISummaryPanel from "@/components/AISummaryPanel"
 
 const TOOLTIPS = {
   cashFlow:
@@ -212,6 +213,9 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             </div>
           </div>
         </div>
+
+        {/* AI Summary */}
+        <AISummaryPanel dealId={deal.id} />
 
         {deal.notes && (
           <div className="bg-white border border-gray-200 rounded-2xl p-6 mt-6">
