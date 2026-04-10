@@ -22,6 +22,9 @@ export default function NavBar({ user }: { user: User }) {
           <Link href="/deals" className="text-sm text-gray-600 hover:text-gray-900">
             Deals
           </Link>
+          <Link href="/projects" className="text-sm text-gray-600 hover:text-gray-900">
+            Projects
+          </Link>
           <Link href="/compare" className="text-sm text-gray-600 hover:text-gray-900">
             Compare
           </Link>

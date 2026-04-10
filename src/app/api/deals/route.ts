@@ -51,6 +51,7 @@ export async function POST(req: NextRequest) {
         vacancyRate: Number(body.vacancyRate ?? 5),
         managementFee: Number(body.managementFee ?? 0),
         notes: body.notes || null,
+        projectId: body.projectId || null,
         addedById: session.user.id,
       },
     })

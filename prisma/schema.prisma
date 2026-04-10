@@ -76,6 +76,14 @@ model VerificationToken {
   @@id([identifier, token])
 }
 
+model Project {
+  id        String   @id @default(cuid())
+  name      String
+  deals     Deal[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
 model Deal {
   id           String @id @default(cuid())
   name         String
@@ -113,6 +121,8 @@ model Deal {
   notes     String?
   zillowUrl String?
 
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String?
   addedBy   User     @relation(fields: [addedById], references: [id])
   addedById String
   createdAt DateTime @default(now())

@@ -15,6 +15,7 @@ type DealData = {
   propertyType: string
   status: string
   zillowUrl: string
+  projectId: string
   purchasePrice: number
   downPaymentPct: number
   closingCosts: number
@@ -42,6 +43,7 @@ const DEFAULTS: DealData = {
   propertyType: "Single Family",
   status: "Prospecting",
   zillowUrl: "",
+  projectId: "",
   purchasePrice: 0,
   downPaymentPct: 20,
   closingCosts: 0,
@@ -73,8 +75,10 @@ export default function DealForm({
     ...initialData,
     zillowUrl: initialData?.zillowUrl ?? "",
     notes: initialData?.notes ?? "",
+    projectId: initialData?.projectId ?? "",
   }))
 
+  const [projects, setProjects] = useState<{ id: string; name: string }[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [importing, setImporting] = useState(false)
@@ -87,6 +91,10 @@ export default function DealForm({
   const [nameManual, setNameManual] = useState(
     () => !!(initialData?.name && initialData.name !== initialData?.address?.split(",")[0])
   )
+
+  useEffect(() => {
+    fetch("/api/projects").then(r => r.json()).then(setProjects).catch(() => {})
+  }, [])
 
   // Auto-set closing costs when purchase price changes (unless manually edited)
   useEffect(() => {
@@ -258,6 +266,17 @@ export default function DealForm({
               className={inputCls}
             >
               {DEAL_STATUSES.map(s => <option key={s}>{s}</option>)}
+            </select>
+          </Field>
+
+          <Field label="Project">
+            <select
+              value={form.projectId}
+              onChange={e => set("projectId", e.target.value)}
+              className={inputCls}
+            >
+              <option value="">— No project —</option>
+              {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
             </select>
           </Field>
 

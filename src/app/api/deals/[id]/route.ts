@@ -57,6 +57,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         vacancyRate: Number(body.vacancyRate),
         managementFee: Number(body.managementFee),
         notes: body.notes || null,
+        projectId: body.projectId || null,
       },
     })
 
