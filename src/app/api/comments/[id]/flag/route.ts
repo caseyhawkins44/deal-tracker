@@ -7,6 +7,9 @@ export async function PATCH(_: NextRequest, { params }: { params: Promise<{ id: 
   if (!session?.user?.id) return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
 
   try {
+    const me = await prisma.user.findUnique({ where: { id: session.user.id }, select: { role: true } })
+    if (me?.role !== "admin") return NextResponse.json({ error: "Forbidden" }, { status: 403 })
+
     const { id } = await params
     const comment = await prisma.comment.findUnique({ where: { id } })
     if (!comment) return NextResponse.json({ error: "Not found" }, { status: 404 })

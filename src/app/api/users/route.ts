@@ -8,7 +8,7 @@ export async function GET() {
   if (!session?.user?.id) return NextResponse.json([], { status: 401 })
 
   const users = await prisma.user.findMany({
-    select: { id: true, name: true, email: true },
+    select: { id: true, name: true },
     orderBy: { name: "asc" },
   })
 

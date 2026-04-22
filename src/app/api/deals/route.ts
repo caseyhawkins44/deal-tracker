@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { auth } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 import { logActivity } from "@/lib/activity"
+import { parseDealNumbers } from "@/lib/validateDealFields"
 
 export async function GET() {
   const session = await auth()
@@ -26,30 +27,24 @@ export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
 
+    if (!body.name || !body.address || !body.city || !body.state) {
+      return NextResponse.json({ error: "name, address, city, and state are required" }, { status: 400 })
+    }
+
+    const nums = parseDealNumbers(body)
+    if ("error" in nums) return NextResponse.json({ error: nums.error }, { status: nums.status })
+
     const deal = await prisma.deal.create({
       data: {
-        name: body.name,
-        address: body.address,
-        city: body.city,
-        state: body.state,
-        zipCode: body.zipCode,
+        name: String(body.name).trim(),
+        address: String(body.address).trim(),
+        city: String(body.city).trim(),
+        state: String(body.state).trim(),
+        zipCode: String(body.zipCode ?? "").trim(),
         propertyType: body.propertyType ?? "Single Family",
         status: body.status ?? "Prospecting",
         zillowUrl: body.zillowUrl || null,
-        purchasePrice: Number(body.purchasePrice),
-        downPaymentPct: Number(body.downPaymentPct ?? 20),
-        closingCosts: Number(body.closingCosts ?? 0),
-        rehabCosts: Number(body.rehabCosts ?? 0),
-        monthlyRent: Number(body.monthlyRent),
-        propertyTax: Number(body.propertyTax ?? 0),
-        insurance: Number(body.insurance ?? 0),
-        maintenance: Number(body.maintenance ?? 0),
-        utilities: Number(body.utilities ?? 0),
-        hoaFees: Number(body.hoaFees ?? 0),
-        interestRate: Number(body.interestRate ?? 7),
-        loanTermYears: Number(body.loanTermYears ?? 30),
-        vacancyRate: Number(body.vacancyRate ?? 5),
-        managementFee: Number(body.managementFee ?? 0),
+        ...nums,
         notes: body.notes || null,
         projectId: body.projectId || null,
         addedById: session.user.id,

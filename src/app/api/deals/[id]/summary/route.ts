@@ -32,6 +32,27 @@ export async function POST(_: NextRequest, { params }: { params: Promise<{ id: s
 
     if (!deal) return NextResponse.json({ error: "Deal not found" }, { status: 404 })
 
+    // Rate limit: one AI summary request per deal per 5 minutes
+    const recentSummaryRequest = await prisma.activityLog.findFirst({
+      where: {
+        dealId: id,
+        action: "AI_SUMMARY_REQUESTED",
+        createdAt: { gte: new Date(Date.now() - 5 * 60 * 1000) },
+      },
+    })
+    if (recentSummaryRequest) {
+      return NextResponse.json({ error: "Summary generated recently. Please wait a few minutes." }, { status: 429 })
+    }
+
+    await prisma.activityLog.create({
+      data: {
+        dealId: id,
+        userId: session.user.id,
+        action: "AI_SUMMARY_REQUESTED",
+        description: `${session.user.name ?? session.user.email} generated an AI summary`,
+      },
+    })
+
     const m = analyzeDeal(deal)
     const c = criteriaRow ?? DEFAULT_CRITERIA
 

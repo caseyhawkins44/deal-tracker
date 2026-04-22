@@ -13,6 +13,16 @@ export async function POST(_req: NextRequest, { params }: { params: Promise<{ id
   const deal = await prisma.deal.findUnique({ where: { id } })
   if (!deal) return NextResponse.json({ error: "Not found" }, { status: 404 })
 
+  // Enforce 1-hour cooldown between Zillow refreshes
+  const msSinceUpdate = Date.now() - new Date(deal.updatedAt).getTime()
+  if (msSinceUpdate < 60 * 60 * 1000) {
+    const minutesLeft = Math.ceil((60 * 60 * 1000 - msSinceUpdate) / 60000)
+    return NextResponse.json(
+      { error: `Zillow data was refreshed recently. Try again in ${minutesLeft} minute(s).` },
+      { status: 429 }
+    )
+  }
+
   const zillowUrl = deal.zillowUrl ?? (typeof body.url === "string" ? body.url : null)
   if (!zillowUrl) return NextResponse.json({ error: "No Zillow URL on this deal" }, { status: 400 })
 
