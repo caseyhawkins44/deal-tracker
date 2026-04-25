@@ -231,7 +231,7 @@ export default function DealsView({
       )}
 
       {view === "map" ? (
-        <DealsMapClient deals={deals} />
+        <DealsMapClient deals={processed} />
       ) : processed.length === 0 ? (
         <div className="text-center py-16 bg-white rounded-[18px] border border-black/[0.07] shadow-sm">
           <p className="text-gray-400">No deals match your filters.</p>
