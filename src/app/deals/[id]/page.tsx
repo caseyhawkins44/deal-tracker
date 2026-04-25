@@ -149,17 +149,18 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             <dl className="space-y-2.5">
               <Row label="Gross Rent" value={fmt(deal.monthlyRent)} />
               <Row label={`Vacancy (${deal.vacancyRate}%)`} value={`− ${fmt(deal.monthlyRent * deal.vacancyRate / 100)}`} />
-              <Row label="Effective Rent" value={fmt(m.effectiveRent)} bold />
+              <div className="pt-2 border-t border-gray-100">
+                <Row label="Effective Rent" value={fmt(m.effectiveRent)} bold />
+              </div>
               <div className="pt-2 border-t border-gray-100 space-y-2.5">
                 <p className="text-xs font-medium text-gray-500 uppercase tracking-wide">Monthly Expenses</p>
-                {deal.propertyTax > 0 && (
-                  <Row
-                    label={`Property Tax (${fmt(deal.propertyTax)}/yr)`}
-                    value={`− ${fmt(m.monthlyPropertyTax)}`}
-                  />
-                )}
-                {deal.insurance > 0 && <Row label="Insurance" value={`− ${fmt(deal.insurance)}`} />}
-                {deal.maintenance > 0 && <Row label="Maintenance" value={`− ${fmt(deal.maintenance)}`} />}
+                <Row
+                  label={`Property Tax (${fmt(deal.propertyTax)}/yr)`}
+                  value={`− ${fmt(m.monthlyPropertyTax)}`}
+                />
+                <Row label="Insurance" value={`− ${fmt(deal.insurance)}`} />
+                <Row label="Maintenance" value={`− ${fmt(deal.maintenance)}`} />
+                <Row label="CapEx Reserve" value={`− ${fmt(deal.capexReserve)}`} />
                 {deal.utilities > 0 && <Row label="Utilities" value={`− ${fmt(deal.utilities)}`} />}
                 {deal.hoaFees > 0 && <Row label="HOA Fees" value={`− ${fmt(deal.hoaFees)}`} />}
                 {deal.managementFee > 0 && (
@@ -168,8 +169,14 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
                     value={`− ${fmt(m.effectiveRent * deal.managementFee / 100)}`}
                   />
                 )}
-                {deal.capexReserve > 0 && <Row label="CapEx Reserve" value={`− ${fmt(deal.capexReserve)}`} />}
                 <Row label="Mortgage (P&I)" value={`− ${fmt(m.monthlyMortgage)}`} />
+              </div>
+              <div className="pt-2 border-t border-gray-100">
+                <Row
+                  label="Total Monthly Expenses"
+                  value={`− ${fmt(m.monthlyOperatingExpenses + m.monthlyMortgage)}`}
+                  bold
+                />
               </div>
               <div className="pt-2 border-t border-gray-100">
                 <Row
