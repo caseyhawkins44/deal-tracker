@@ -13,7 +13,10 @@ export default async function DealsPage() {
 
   const [deals, criteriaRow] = await Promise.all([
     prisma.deal.findMany({
-      include: { addedBy: { select: { name: true } } },
+      include: {
+        addedBy: { select: { name: true } },
+        project: { select: { id: true, name: true } },
+      },
       orderBy: { createdAt: "desc" },
     }),
     prisma.investmentCriteria.findUnique({ where: { id: "singleton" } }),
@@ -47,6 +50,8 @@ export default async function DealsPage() {
     capexReserve: d.capexReserve,
     zillowUrl: d.zillowUrl,
     addedByName: d.addedBy.name,
+    projectId: d.project?.id ?? null,
+    projectName: d.project?.name ?? null,
   }))
 
   return (

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useMemo } from "react"
 import Link from "next/link"
 import { analyzeDeal, fmt, fmtPct } from "@/lib/calculations"
 import { metricDot, type InvestmentCriteriaType } from "@/lib/criteria"
@@ -32,6 +32,19 @@ export type SerializedDeal = {
   capexReserve: number
   zillowUrl: string | null
   addedByName: string | null
+  projectId: string | null
+  projectName: string | null
+}
+
+type SortField = "purchasePrice" | "monthlyCashFlow" | "capRate" | "cashOnCash" | "grossYield"
+type SortDir = "asc" | "desc"
+
+const SORT_LABELS: Record<SortField, string> = {
+  purchasePrice: "Price",
+  monthlyCashFlow: "Cash Flow",
+  capRate: "Cap Rate",
+  cashOnCash: "Cash-on-Cash",
+  grossYield: "Gross Yield",
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -48,10 +61,7 @@ const DOT_COLORS = {
 }
 
 function Metric({
-  label,
-  value,
-  positive,
-  dot,
+  label, value, positive, dot,
 }: {
   label: string
   value: string
@@ -69,6 +79,8 @@ function Metric({
   )
 }
 
+const selectCls = "bg-white border border-black/[0.10] rounded-lg px-3 py-1.5 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#0071e3]/30 focus:border-[#0071e3]/50 cursor-pointer"
+
 export default function DealsView({
   deals,
   criteria,
@@ -77,33 +89,162 @@ export default function DealsView({
   criteria: InvestmentCriteriaType
 }) {
   const [view, setView] = useState<"list" | "map">("list")
+  const [filterStatus, setFilterStatus] = useState("")
+  const [filterProject, setFilterProject] = useState("")
+  const [filterAddedBy, setFilterAddedBy] = useState("")
+  const [sortField, setSortField] = useState<SortField>("purchasePrice")
+  const [sortDir, setSortDir] = useState<SortDir>("desc")
+
+  // Derive unique filter options from deal data
+  const statuses = useMemo(() => [...new Set(deals.map(d => d.status))].sort(), [deals])
+  const projects = useMemo(() => {
+    const seen = new Map<string, string>()
+    for (const d of deals) {
+      if (d.projectId && d.projectName) seen.set(d.projectId, d.projectName)
+    }
+    return [...seen.entries()].map(([id, name]) => ({ id, name })).sort((a, b) => a.name.localeCompare(b.name))
+  }, [deals])
+  const addedByOptions = useMemo(
+    () => [...new Set(deals.map(d => d.addedByName).filter(Boolean) as string[])].sort(),
+    [deals]
+  )
+
+  const hasFilters = filterStatus || filterProject || filterAddedBy
+
+  function toggleSort(field: SortField) {
+    if (sortField === field) {
+      setSortDir(d => d === "desc" ? "asc" : "desc")
+    } else {
+      setSortField(field)
+      setSortDir(field === "purchasePrice" ? "asc" : "desc")
+    }
+  }
+
+  const processed = useMemo(() => {
+    let result = deals
+
+    if (filterStatus) result = result.filter(d => d.status === filterStatus)
+    if (filterProject === "__unassigned__") {
+      result = result.filter(d => !d.projectId)
+    } else if (filterProject) {
+      result = result.filter(d => d.projectId === filterProject)
+    }
+    if (filterAddedBy) result = result.filter(d => d.addedByName === filterAddedBy)
+
+    result = [...result].sort((a, b) => {
+      const ma = analyzeDeal(a)
+      const mb = analyzeDeal(b)
+      const va = sortField === "purchasePrice" ? a.purchasePrice : ma[sortField]
+      const vb = sortField === "purchasePrice" ? b.purchasePrice : mb[sortField]
+      return sortDir === "desc" ? vb - va : va - vb
+    })
+
+    return result
+  }, [deals, filterStatus, filterProject, filterAddedBy, sortField, sortDir])
 
   return (
     <div>
-      <div className="flex gap-1 mb-6 bg-gray-100 p-1 rounded-lg w-fit">
-        <button
-          onClick={() => setView("list")}
-          className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-            view === "list" ? "bg-white shadow-sm text-gray-900" : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          List
-        </button>
-        <button
-          onClick={() => setView("map")}
-          className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-            view === "map" ? "bg-white shadow-sm text-gray-900" : "text-gray-500 hover:text-gray-700"
-          }`}
-        >
-          Map
-        </button>
+      {/* View toggle + filters */}
+      <div className="flex flex-wrap items-center gap-3 mb-6">
+        <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+          <button
+            onClick={() => setView("list")}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              view === "list" ? "bg-white shadow-sm text-gray-900" : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            List
+          </button>
+          <button
+            onClick={() => setView("map")}
+            className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+              view === "map" ? "bg-white shadow-sm text-gray-900" : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            Map
+          </button>
+        </div>
+
+        <div className="w-px h-5 bg-black/[0.10] hidden sm:block" />
+
+        {/* Filters */}
+        <select value={filterStatus} onChange={e => setFilterStatus(e.target.value)} className={selectCls}>
+          <option value="">All Statuses</option>
+          {statuses.map(s => <option key={s} value={s}>{s}</option>)}
+        </select>
+
+        {projects.length > 0 && (
+          <select value={filterProject} onChange={e => setFilterProject(e.target.value)} className={selectCls}>
+            <option value="">All Projects</option>
+            <option value="__unassigned__">Unassigned</option>
+            {projects.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
+          </select>
+        )}
+
+        {addedByOptions.length > 1 && (
+          <select value={filterAddedBy} onChange={e => setFilterAddedBy(e.target.value)} className={selectCls}>
+            <option value="">All Users</option>
+            {addedByOptions.map(u => <option key={u} value={u}>{u}</option>)}
+          </select>
+        )}
+
+        {hasFilters && (
+          <button
+            onClick={() => { setFilterStatus(""); setFilterProject(""); setFilterAddedBy("") }}
+            className="text-xs text-gray-400 hover:text-gray-600 transition-colors"
+          >
+            Clear filters
+          </button>
+        )}
+
+        <div className="w-px h-5 bg-black/[0.10] hidden sm:block" />
+
+        {/* Sort */}
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-gray-400 font-medium">Sort:</span>
+          <div className="flex gap-1">
+            {(Object.keys(SORT_LABELS) as SortField[]).map(field => (
+              <button
+                key={field}
+                onClick={() => toggleSort(field)}
+                className={`px-2.5 py-1.5 text-xs font-medium rounded-lg transition-colors flex items-center gap-1 ${
+                  sortField === field
+                    ? "bg-[#0071e3] text-white"
+                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                }`}
+              >
+                {SORT_LABELS[field]}
+                {sortField === field && (
+                  <span className="text-[10px] leading-none">{sortDir === "desc" ? "↓" : "↑"}</span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
       </div>
+
+      {/* Result count when filtered */}
+      {hasFilters && (
+        <p className="text-sm text-gray-500 mb-4">
+          Showing {processed.length} of {deals.length} deal{deals.length !== 1 ? "s" : ""}
+        </p>
+      )}
 
       {view === "map" ? (
         <DealsMapClient deals={deals} />
+      ) : processed.length === 0 ? (
+        <div className="text-center py-16 bg-white rounded-[18px] border border-black/[0.07] shadow-sm">
+          <p className="text-gray-400">No deals match your filters.</p>
+          <button
+            onClick={() => { setFilterStatus(""); setFilterProject(""); setFilterAddedBy("") }}
+            className="mt-3 text-sm text-[#0071e3] hover:underline"
+          >
+            Clear filters
+          </button>
+        </div>
       ) : (
         <div className="grid gap-4">
-          {deals.map((deal) => {
+          {processed.map((deal) => {
             const m = analyzeDeal(deal)
             const isPositive = m.monthlyCashFlow >= 0
             return (
@@ -123,6 +264,11 @@ export default function DealsView({
                       >
                         {deal.status}
                       </span>
+                      {deal.projectName && (
+                        <span className="text-xs px-2.5 py-0.5 rounded-full font-medium bg-gray-100 text-gray-500">
+                          {deal.projectName}
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm text-gray-500">
                       {deal.address}, {deal.city}, {deal.state} · {deal.propertyType}
