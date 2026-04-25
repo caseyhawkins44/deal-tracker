@@ -119,6 +119,7 @@ model Deal {
   // Rates
   vacancyRate   Float @default(5)
   managementFee Float @default(0)
+  capexReserve  Float @default(0)
 
   notes     String?
   zillowUrl String?

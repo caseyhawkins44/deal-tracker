@@ -13,6 +13,7 @@ export type Deal = {
   loanTermYears: number
   vacancyRate: number
   managementFee: number
+  capexReserve: number
 }
 
 export function analyzeDeal(deal: Deal) {
@@ -45,7 +46,8 @@ export function analyzeDeal(deal: Deal) {
     deal.maintenance +
     deal.utilities +
     deal.hoaFees +
-    monthlyManagement
+    monthlyManagement +
+    deal.capexReserve
 
   // NOI (annual)
   const annualNOI = (effectiveRent - monthlyOperatingExpenses) * 12

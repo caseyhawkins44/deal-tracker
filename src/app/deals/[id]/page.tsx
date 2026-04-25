@@ -168,6 +168,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
                     value={`− ${fmt(m.effectiveRent * deal.managementFee / 100)}`}
                   />
                 )}
+                {deal.capexReserve > 0 && <Row label="CapEx Reserve" value={`− ${fmt(deal.capexReserve)}`} />}
                 <Row label="Mortgage (P&I)" value={`− ${fmt(m.monthlyMortgage)}`} />
               </div>
               <div className="pt-2 border-t border-gray-100">

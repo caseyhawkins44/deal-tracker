@@ -44,6 +44,7 @@ export default async function DealsPage() {
     loanTermYears: d.loanTermYears,
     vacancyRate: d.vacancyRate,
     managementFee: d.managementFee,
+    capexReserve: d.capexReserve,
     zillowUrl: d.zillowUrl,
     addedByName: d.addedBy.name,
   }))

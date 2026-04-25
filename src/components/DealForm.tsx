@@ -7,8 +7,10 @@ import AddressSearch from "@/components/AddressSearch"
 import InfoTooltip from "@/components/InfoTooltip"
 import { DEAL_STATUSES, PROPERTY_TYPES, CLOSING_COST_PCT } from "@/lib/constants"
 
-const INSURANCE_PCT = 0.005   // 0.5% of purchase price annually
-const MAINTENANCE_PCT = 0.01  // 1.0% of purchase price annually
+const INSURANCE_PCT = 0.005     // 0.5% of purchase price annually
+const MAINTENANCE_PCT = 0.01    // 1.0% of purchase price annually
+const CAPEX_PCT = 0.01          // 1.0% of purchase price annually
+const PROPERTY_TAX_PCT = 0.011  // 1.1% of purchase price annually (national avg)
 
 type DealData = {
   name: string
@@ -31,6 +33,7 @@ type DealData = {
   maintenance: number
   utilities: number
   hoaFees: number
+  capexReserve: number
   interestRate: number
   loanTermYears: number
   vacancyRate: number
@@ -58,6 +61,7 @@ const DEFAULTS: DealData = {
   maintenance: 0,
   utilities: 0,
   hoaFees: 0,
+  capexReserve: 0,
   interestRate: 7,
   loanTermYears: 30,
   vacancyRate: 5,
@@ -97,6 +101,12 @@ export default function DealForm({
   const [maintenanceManual, setMaintenanceManual] = useState(
     () => !!(initialData?.maintenance && initialData.maintenance > 0)
   )
+  const [capexManual, setCapexManual] = useState(
+    () => !!(initialData?.capexReserve && initialData.capexReserve > 0)
+  )
+  const [propertyTaxManual, setPropertyTaxManual] = useState(
+    () => !!(initialData?.propertyTax && initialData.propertyTax > 0)
+  )
   // Track if user has manually set the deal name
   const [nameManual, setNameManual] = useState(
     () => !!(initialData?.name && initialData.name !== initialData?.address?.split(",")[0])
@@ -126,6 +136,20 @@ export default function DealForm({
       setForm(f => ({ ...f, maintenance: Math.round((form.purchasePrice * MAINTENANCE_PCT) / 12) }))
     }
   }, [form.purchasePrice, maintenanceManual])
+
+  // Auto-set CapEx reserve (1% of price/yr ÷ 12) unless manually edited
+  useEffect(() => {
+    if (!capexManual && form.purchasePrice > 0) {
+      setForm(f => ({ ...f, capexReserve: Math.round((form.purchasePrice * CAPEX_PCT) / 12) }))
+    }
+  }, [form.purchasePrice, capexManual])
+
+  // Auto-set property tax (1.1% of price/yr) unless manually edited or Zillow-imported
+  useEffect(() => {
+    if (!propertyTaxManual && form.purchasePrice > 0) {
+      setForm(f => ({ ...f, propertyTax: Math.round(form.purchasePrice * PROPERTY_TAX_PCT) }))
+    }
+  }, [form.purchasePrice, propertyTaxManual])
 
   // Auto-set deal name from address (unless manually edited)
   useEffect(() => {
@@ -169,6 +193,7 @@ export default function DealForm({
       ...(data.hoaFees && { hoaFees: data.hoaFees }),
       ...(data.monthlyRent && { monthlyRent: data.monthlyRent }),
     }))
+    if (data.propertyTax) setPropertyTaxManual(true)
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -453,10 +478,18 @@ export default function DealForm({
             />
           </Field>
 
-          <Field label="Annual Property Tax">
+          <Field label={
+            <>
+              Annual Property Tax
+              {!propertyTaxManual && form.purchasePrice > 0 && (
+                <span className="text-[10px] text-[#0071e3] bg-[#e8f1fb] border border-[#0071e3]/25 px-1.5 rounded-full font-normal">est. 1.1%/yr</span>
+              )}
+              <InfoTooltip content="National average is ~1.1% of purchase price annually. Enter the actual tax bill when known — it varies significantly by state and county. Zillow import will fill this in automatically." />
+            </>
+          }>
             <CurrencyInput
               value={form.propertyTax}
-              onChange={v => set("propertyTax", v)}
+              onChange={v => { setPropertyTaxManual(true); set("propertyTax", v) }}
               className={inputCls}
             />
           </Field>
@@ -510,6 +543,22 @@ export default function DealForm({
             <CurrencyInput
               value={form.hoaFees}
               onChange={v => set("hoaFees", v)}
+              className={inputCls}
+            />
+          </Field>
+
+          <Field label={
+            <>
+              CapEx Reserve ($/mo)
+              {!capexManual && form.purchasePrice > 0 && (
+                <span className="text-[10px] text-[#0071e3] bg-[#e8f1fb] border border-[#0071e3]/25 px-1.5 rounded-full font-normal">est. 1%/yr</span>
+              )}
+              <InfoTooltip content="Capital expenditure reserve — money set aside monthly for big-ticket replacements: roof, HVAC, water heater, appliances. Estimated at 1% of purchase price per year ÷ 12. Unlike maintenance (routine repairs), CapEx covers items that need full replacement every 10–20 years. This is the most commonly overlooked expense in deal analysis." />
+            </>
+          }>
+            <CurrencyInput
+              value={form.capexReserve}
+              onChange={v => { setCapexManual(true); set("capexReserve", v) }}
               className={inputCls}
             />
           </Field>

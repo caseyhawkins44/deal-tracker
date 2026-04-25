@@ -29,6 +29,7 @@ export type SerializedDeal = {
   loanTermYears: number
   vacancyRate: number
   managementFee: number
+  capexReserve: number
   zillowUrl: string | null
   addedByName: string | null
 }

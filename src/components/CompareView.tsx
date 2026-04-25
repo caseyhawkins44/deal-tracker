@@ -34,6 +34,7 @@ type Deal = {
   loanTermYears: number
   vacancyRate: number
   managementFee: number
+  capexReserve: number
   status: string
 }
 

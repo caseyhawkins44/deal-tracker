@@ -19,6 +19,7 @@ export function parseDealNumbers(body: Record<string, unknown>):
       loanTermYears: number
       vacancyRate: number
       managementFee: number
+      capexReserve: number
     } {
   const fields: Array<{ key: string; min: number; max: number }> = [
     { key: "purchasePrice", min: 1, max: 100_000_000 },
@@ -35,6 +36,7 @@ export function parseDealNumbers(body: Record<string, unknown>):
     { key: "loanTermYears", min: 1, max: 50 },
     { key: "vacancyRate", min: 0, max: 100 },
     { key: "managementFee", min: 0, max: 100 },
+    { key: "capexReserve", min: 0, max: 100_000 },
   ]
 
   const result: Record<string, number> = {}
