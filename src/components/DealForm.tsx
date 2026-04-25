@@ -8,8 +8,8 @@ import InfoTooltip from "@/components/InfoTooltip"
 import { DEAL_STATUSES, PROPERTY_TYPES, CLOSING_COST_PCT } from "@/lib/constants"
 
 const INSURANCE_PCT = 0.005     // 0.5% of purchase price annually
-const MAINTENANCE_PCT = 0.01    // 1.0% of purchase price annually
-const CAPEX_PCT = 0.01          // 1.0% of purchase price annually
+const MAINTENANCE_PCT = 0.005   // 0.5% of purchase price annually
+const CAPEX_PCT = 0.005         // 0.5% of purchase price annually
 const PROPERTY_TAX_PCT = 0.011  // 1.1% of purchase price annually (national avg)
 
 type DealData = {
@@ -514,9 +514,9 @@ export default function DealForm({
             <>
               Maintenance ($/mo)
               {!maintenanceManual && form.purchasePrice > 0 && (
-                <span className="text-[10px] text-[#0071e3] bg-[#e8f1fb] border border-[#0071e3]/25 px-1.5 rounded-full font-normal">est. 1%/yr</span>
+                <span className="text-[10px] text-[#0071e3] bg-[#e8f1fb] border border-[#0071e3]/25 px-1.5 rounded-full font-normal">est. 0.5%/yr</span>
               )}
-              <InfoTooltip content="Estimated at 1% of purchase price per year ÷ 12 — the standard rule of thumb for ongoing repairs and upkeep. Older homes or those needing work may run higher (1.5–2%)." />
+              <InfoTooltip content="Estimated at 0.5% of purchase price per year ÷ 12 — covers routine repairs like leaky faucets, appliance fixes, and minor upkeep. Older homes may run higher. Separate from CapEx, which covers full replacements." />
             </>
           }>
             <CurrencyInput
@@ -551,9 +551,9 @@ export default function DealForm({
             <>
               CapEx Reserve ($/mo)
               {!capexManual && form.purchasePrice > 0 && (
-                <span className="text-[10px] text-[#0071e3] bg-[#e8f1fb] border border-[#0071e3]/25 px-1.5 rounded-full font-normal">est. 1%/yr</span>
+                <span className="text-[10px] text-[#0071e3] bg-[#e8f1fb] border border-[#0071e3]/25 px-1.5 rounded-full font-normal">est. 0.5%/yr</span>
               )}
-              <InfoTooltip content="Capital expenditure reserve — money set aside monthly for big-ticket replacements: roof, HVAC, water heater, appliances. Estimated at 1% of purchase price per year ÷ 12. Unlike maintenance (routine repairs), CapEx covers items that need full replacement every 10–20 years. This is the most commonly overlooked expense in deal analysis." />
+              <InfoTooltip content="Capital expenditure reserve — money set aside monthly for big-ticket replacements: roof, HVAC, water heater, appliances. Estimated at 0.5% of purchase price per year ÷ 12. Combined with maintenance (also 0.5%), total upkeep runs ~1% of purchase price annually — the standard rule of thumb." />
             </>
           }>
             <CurrencyInput
