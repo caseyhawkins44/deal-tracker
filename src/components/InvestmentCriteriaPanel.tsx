@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import type { InvestmentCriteriaType } from "@/lib/criteria"
+import InfoTooltip from "@/components/InfoTooltip"
 
 type Criteria = InvestmentCriteriaType
 
@@ -9,17 +10,38 @@ const METRICS: {
   key: keyof Criteria
   ignoreKey: keyof Criteria
   label: string
+  tooltip: string
   unit: string
   prefix?: string
   step: number
   min: number
   higherIsBetter: boolean
 }[] = [
-  { key: "minMonthlyCashFlow", ignoreKey: "ignoreCashFlow",   label: "Monthly Cash Flow", unit: "/mo", prefix: "$", step: 25,   min: 0,    higherIsBetter: true  },
-  { key: "minCapRate",         ignoreKey: "ignoreCapRate",    label: "Cap Rate",           unit: "%",              step: 0.5,  min: 0,    higherIsBetter: true  },
-  { key: "minCashOnCash",      ignoreKey: "ignoreCashOnCash", label: "Cash-on-Cash",       unit: "%",              step: 0.5,  min: 0,    higherIsBetter: true  },
-  { key: "minDscr",            ignoreKey: "ignoreDscr",       label: "DSCR",               unit: "×",              step: 0.05, min: 0,    higherIsBetter: true  },
-  { key: "maxGrm",             ignoreKey: "ignoreGrm",        label: "GRM",                unit: "×",              step: 0.5,  min: 0,    higherIsBetter: false },
+  {
+    key: "minMonthlyCashFlow", ignoreKey: "ignoreCashFlow",
+    label: "Monthly Cash Flow", unit: "/mo", prefix: "$", step: 25, min: 0, higherIsBetter: true,
+    tooltip: "Net income after every expense including mortgage. This is the cash that actually hits your account each month. $200+/door is a common investor target — $100 is a conservative floor.",
+  },
+  {
+    key: "minCapRate", ignoreKey: "ignoreCapRate",
+    label: "Cap Rate", unit: "%", step: 0.5, min: 0, higherIsBetter: true,
+    tooltip: "Net Operating Income ÷ Purchase Price. Measures the property's return independent of how it's financed — useful for comparing deals apples-to-apples. 6%+ is generally solid; 8%+ is strong in most markets.",
+  },
+  {
+    key: "minCashOnCash", ignoreKey: "ignoreCashOnCash",
+    label: "Cash-on-Cash Return", unit: "%", step: 0.5, min: 0, higherIsBetter: true,
+    tooltip: "Annual cash flow ÷ Total cash invested (down payment + closing costs + rehab). Your actual return on the dollars you put in — the most investor-relevant metric. 8% is a common target; 10–12%+ is excellent.",
+  },
+  {
+    key: "minDscr", ignoreKey: "ignoreDscr",
+    label: "DSCR", unit: "×", step: 0.05, min: 0, higherIsBetter: true,
+    tooltip: "Debt Service Coverage Ratio: NOI ÷ Annual mortgage payments. A DSCR of 1.25× means the property earns 25% more than it costs to service the debt. Lenders typically require 1.20–1.25×; below 1.0× means the rent doesn't cover the mortgage.",
+  },
+  {
+    key: "maxGrm", ignoreKey: "ignoreGrm",
+    label: "GRM", unit: "×", step: 0.5, min: 0, higherIsBetter: false,
+    tooltip: "Gross Rent Multiplier: Purchase Price ÷ Annual Gross Rent. A quick screening filter — how many years of gross rent equals the asking price. Lower is better. Under 10× is favorable; under 7× is excellent. This is a maximum, not a minimum.",
+  },
 ]
 
 function formatValue(value: number, prefix?: string, unit?: string) {
@@ -96,12 +118,15 @@ export default function InvestmentCriteriaPanel({
 
       {editing ? (
         <div className="space-y-3">
-          {METRICS.map(({ key, ignoreKey, label, unit, prefix, step, min, higherIsBetter }) => {
+          {METRICS.map(({ key, ignoreKey, label, tooltip, unit, prefix, step, min, higherIsBetter }) => {
             const ignored = draft[ignoreKey] as boolean
             return (
               <div key={key} className={`flex items-center gap-3 p-3 rounded-xl border transition-colors ${ignored ? "border-gray-100 bg-gray-50" : "border-black/[0.07] bg-white"}`}>
                 <div className="flex-1 min-w-0">
-                  <p className={`text-sm font-medium ${ignored ? "text-gray-400" : "text-gray-700"}`}>{label}</p>
+                  <p className={`text-sm font-medium flex items-center ${ignored ? "text-gray-400" : "text-gray-700"}`}>
+                    {label}
+                    <InfoTooltip content={tooltip} />
+                  </p>
                   <p className="text-[11px] text-gray-400">{higherIsBetter ? "minimum" : "maximum"}</p>
                 </div>
                 <div className="flex items-center gap-1.5">
@@ -153,14 +178,17 @@ export default function InvestmentCriteriaPanel({
         </div>
       ) : (
         <div className="space-y-2">
-          {METRICS.map(({ key, ignoreKey, label, unit, prefix, higherIsBetter }) => {
+          {METRICS.map(({ key, ignoreKey, label, tooltip, unit, prefix, higherIsBetter }) => {
             const ignored = criteria[ignoreKey] as boolean
             const value = criteria[key] as number
             return (
               <div key={key} className={`flex items-center justify-between py-2 border-b border-gray-50 last:border-0 ${ignored ? "opacity-40" : ""}`}>
                 <div className="flex items-center gap-2">
                   <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ignored ? "bg-gray-300" : "bg-green-500"}`} />
-                  <span className="text-sm text-gray-700">{label}</span>
+                  <span className="text-sm text-gray-700 flex items-center">
+                    {label}
+                    <InfoTooltip content={tooltip} />
+                  </span>
                   {ignored && <span className="text-[10px] text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">ignored</span>}
                 </div>
                 <span className="text-sm font-semibold text-gray-900">
