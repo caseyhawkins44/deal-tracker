@@ -6,6 +6,8 @@ import NavBar from "@/components/NavBar"
 import { analyzeDeal, fmt, fmtPct } from "@/lib/calculations"
 import { timeAgo } from "@/lib/timeAgo"
 import { DEAL_STATUSES } from "@/lib/constants"
+import { DEFAULT_CRITERIA } from "@/lib/criteria"
+import InvestmentCriteriaPanel from "@/components/InvestmentCriteriaPanel"
 
 const STATUS_COLORS: Record<string, string> = {
   Prospecting: "bg-[#e8f1fb] text-[#0071e3] border-[#0071e3]/25",
@@ -21,7 +23,7 @@ export default async function DashboardPage() {
 
   const fourteenDaysAgo = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000)
 
-  const [deals, recentActivity] = await Promise.all([
+  const [deals, recentActivity, criteriaRow] = await Promise.all([
     prisma.deal.findMany({
       orderBy: { createdAt: "desc" },
       include: {
@@ -39,8 +41,10 @@ export default async function DashboardPage() {
         deal: { select: { id: true, name: true, address: true } },
       },
     }),
+    prisma.investmentCriteria.findUnique({ where: { id: "singleton" } }),
   ])
 
+  const criteria = criteriaRow ?? DEFAULT_CRITERIA
   const activeDeals = deals.filter((d) => d.status !== "Passed")
   const stagnant = activeDeals.filter((d) => {
     const lastActivity = d.activity[0]
@@ -110,7 +114,9 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
+        <InvestmentCriteriaPanel initialCriteria={criteria} />
+
+        <div className="grid md:grid-cols-2 gap-6 mt-6">
           {/* Recent Activity */}
           <div className="bg-white border border-black/[0.07] rounded-[18px] shadow-sm p-6">
             <h2 className="font-semibold mb-4">Recent Activity</h2>

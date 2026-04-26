@@ -16,6 +16,11 @@ export default function SettingsForm({
     minDscr: initialValues.minDscr,
     maxGrm: initialValues.maxGrm,
     minMonthlyCashFlow: initialValues.minMonthlyCashFlow,
+    ignoreCashOnCash: initialValues.ignoreCashOnCash ?? false,
+    ignoreCapRate: initialValues.ignoreCapRate ?? false,
+    ignoreDscr: initialValues.ignoreDscr ?? false,
+    ignoreGrm: initialValues.ignoreGrm ?? false,
+    ignoreCashFlow: initialValues.ignoreCashFlow ?? false,
   })
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)

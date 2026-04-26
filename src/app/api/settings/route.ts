@@ -28,6 +28,11 @@ export async function PUT(req: NextRequest) {
       minDscr: Number(body.minDscr),
       maxGrm: Number(body.maxGrm),
       minMonthlyCashFlow: Number(body.minMonthlyCashFlow),
+      ignoreCashOnCash: Boolean(body.ignoreCashOnCash),
+      ignoreCapRate: Boolean(body.ignoreCapRate),
+      ignoreDscr: Boolean(body.ignoreDscr),
+      ignoreGrm: Boolean(body.ignoreGrm),
+      ignoreCashFlow: Boolean(body.ignoreCashFlow),
     }
     const criteria = await prisma.investmentCriteria.upsert({
       where: { id: "singleton" },

@@ -285,19 +285,19 @@ export default function DealsView({
                     label="Cash Flow/mo"
                     value={fmt(m.monthlyCashFlow)}
                     positive={isPositive}
-                    dot={metricDot(m.monthlyCashFlow, criteria.minMonthlyCashFlow)}
+                    dot={metricDot(m.monthlyCashFlow, criteria.minMonthlyCashFlow, true, criteria.ignoreCashFlow)}
                   />
                   <Metric
                     label="Cap Rate"
                     value={fmtPct(m.capRate)}
                     positive={m.capRate >= 5}
-                    dot={metricDot(m.capRate, criteria.minCapRate)}
+                    dot={metricDot(m.capRate, criteria.minCapRate, true, criteria.ignoreCapRate)}
                   />
                   <Metric
                     label="Cash-on-Cash"
                     value={fmtPct(m.cashOnCash)}
                     positive={m.cashOnCash >= 8}
-                    dot={metricDot(m.cashOnCash, criteria.minCashOnCash)}
+                    dot={metricDot(m.cashOnCash, criteria.minCashOnCash, true, criteria.ignoreCashOnCash)}
                   />
                   <Metric
                     label="Gross Yield"

@@ -97,7 +97,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             value={fmt(m.monthlyCashFlow)}
             sub="after all expenses + mortgage"
             positive={m.monthlyCashFlow >= 0}
-            dot={metricDot(m.monthlyCashFlow, c.minMonthlyCashFlow)}
+            dot={metricDot(m.monthlyCashFlow, c.minMonthlyCashFlow, true, c.ignoreCashFlow)}
           />
           <BigMetric
             label="Cap Rate"
@@ -105,7 +105,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             value={fmtPct(m.capRate)}
             sub="NOI ÷ purchase price"
             positive={m.capRate >= 5}
-            dot={metricDot(m.capRate, c.minCapRate)}
+            dot={metricDot(m.capRate, c.minCapRate, true, c.ignoreCapRate)}
           />
           <BigMetric
             label="Cash-on-Cash"
@@ -113,7 +113,7 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
             value={fmtPct(m.cashOnCash)}
             sub="annual cash flow ÷ invested"
             positive={m.cashOnCash >= 8}
-            dot={metricDot(m.cashOnCash, c.minCashOnCash)}
+            dot={metricDot(m.cashOnCash, c.minCashOnCash, true, c.ignoreCashOnCash)}
           />
           <BigMetric
             label="Gross Yield"
@@ -208,14 +208,14 @@ export default async function DealDetailPage({ params }: { params: Promise<{ id:
               <p className="text-xs text-gray-500 mb-0.5">GRM</p>
               <div className="flex items-center gap-1.5">
                 <p className="font-semibold">{m.grm.toFixed(1)}x</p>
-                <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLORS[metricDot(m.grm, c.maxGrm, false)]}`} />
+                <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLORS[metricDot(m.grm, c.maxGrm, false, c.ignoreGrm)]}`} />
               </div>
             </div>
             <div>
               <p className="text-xs text-gray-500 mb-0.5">DSCR</p>
               <div className="flex items-center gap-1.5">
                 <p className="font-semibold">{m.dscr === 999 ? "N/A (no debt)" : m.dscr.toFixed(2) + "x"}</p>
-                <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLORS[metricDot(m.dscr, c.minDscr)]}`} />
+                <span className={`w-2 h-2 rounded-full shrink-0 ${DOT_COLORS[metricDot(m.dscr, c.minDscr, true, c.ignoreDscr)]}`} />
               </div>
             </div>
           </div>

@@ -189,10 +189,15 @@ model AppSettings {
 }
 
 model InvestmentCriteria {
-  id                 String @id @default("singleton")
-  minCashOnCash      Float  @default(8)
-  minCapRate         Float  @default(6)
-  minDscr            Float  @default(1.25)
-  maxGrm             Float  @default(12)
-  minMonthlyCashFlow Float  @default(100)
+  id                 String  @id @default("singleton")
+  minCashOnCash      Float   @default(8)
+  minCapRate         Float   @default(6)
+  minDscr            Float   @default(1.25)
+  maxGrm             Float   @default(12)
+  minMonthlyCashFlow Float   @default(100)
+  ignoreCashOnCash   Boolean @default(false)
+  ignoreCapRate      Boolean @default(false)
+  ignoreDscr         Boolean @default(false)
+  ignoreGrm          Boolean @default(false)
+  ignoreCashFlow     Boolean @default(false)
 }
